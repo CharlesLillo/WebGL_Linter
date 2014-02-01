@@ -3,7 +3,8 @@ WebGL_Linter
 
 A static analysis tool for WebGL projects.
 
-LINKS:
+LINKS:  
+
 	Flex: http://flex.sourceforge.net/  
 
 	Antlr: http://www.antlr.org/  
@@ -19,15 +20,15 @@ LINKS:
 	Apache Ant: https://ant.apache.org/  
 
 
-	Helpful sites:  
+Helpful sites:  
 
-		https://www.shadertoy.com/  
+	https://www.shadertoy.com/  
 
-		http://www.chromeexperiments.com/webgl/  
+	http://www.chromeexperiments.com/webgl/  
 
-		http://learningwebgl.com/blog/  
+	http://learningwebgl.com/blog/  
 
-		https://developer.mozilla.org/en-US/docs/Web/WebGL  
+	https://developer.mozilla.org/en-US/docs/Web/WebGL  
 
 
 First Objectives (As of Feb 6):  
@@ -47,4 +48,4 @@ First Objectives (As of Feb 6):
 	Parser written in Antlr:  
 
 		FOCUS: Ability to parse our Flex file.  
-		
+
