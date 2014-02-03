@@ -111,10 +111,62 @@ white [ \t\n\r\0]
 "TRIANGLE_STRIP"{white}? 		{ fprintf(yyout,"%d ", const35sym); }
 "TRIANGLE_FAN"{white}? 			{ fprintf(yyout,"%d ", const36sym); }
 
-/*JS Functions*/
+/*JS Functions - NOTE, many of these will actually require parameters and parenthesis, not whitespace after */
 
+"getContext"{white}? 			    { fprintf(yyout,"%d ", func1sym); }
+"getExtension"{white}?			    { fprintf(yyout,"%d ", func2sym); }
+"clear"{white}?					    { fprintf(yyout,"%d ", func3sym); }
+"createFramebuffer"{white}? 	    { fprintf(yyout,"%d ", func4sym); }
+"bindFramebuffer"{white}?		    { fprintf(yyout,"%d ", func5sym); }
+"createTexture"{white}?			    { fprintf(yyout,"%d ", func6sym); }
+"bindTexture"{white}? 			    { fprintf(yyout,"%d ", func7sym); }
+"texParameteri"{white}?			    { fprintf(yyout,"%d ", func8sym); }
+"texImage2D"{white}?			    { fprintf(yyout,"%d ", func9sym); }
+"createRenderbuffer"{white}? 	    { fprintf(yyout,"%d ", func10sym); }
+
+"bindRenderbuffer"{white}? 			{ fprintf(yyout,"%d ", func11sym); }
+"renderbufferStorage"{white}?		{ fprintf(yyout,"%d ", func12sym); }
+"framebufferTexture2D"{white}?		{ fprintf(yyout,"%d ", func13sym); }
+"framebufferRenderbuffer"{white}? 	{ fprintf(yyout,"%d ", func14sym); }
+"readPixels"{white}?				{ fprintf(yyout,"%d ", func15sym); }
+"clearColor"{white}?				{ fprintf(yyout,"%d ", func16sym); }
+"enable"{white}? 					{ fprintf(yyout,"%d ", func17sym); }
+"createBuffer"{white}?				{ fprintf(yyout,"%d ", func18sym); }
+"bufferData"{white}?				{ fprintf(yyout,"%d ", func19sym); }
+"bindBuffer"{white}? 				{ fprintf(yyout,"%d ", func20sym); }
+
+"uniform4fv"{white}? 				{ fprintf(yyout,"%d ", func21sym); }
+"enableVertexAttribArray"{white}?	{ fprintf(yyout,"%d ", func22sym); }
+"vertexAttribPointer"{white}?		{ fprintf(yyout,"%d ", func23sym); }
+"disableVertexAttribArray"{white}? 	{ fprintf(yyout,"%d ", func24sym); }
+"vertexAttrib3f"{white}?			{ fprintf(yyout,"%d ", func25sym); }
+"activeTexture"{white}?				{ fprintf(yyout,"%d ", func26sym); }
+"uniform1i"{white}? 				{ fprintf(yyout,"%d ", func27sym); }
+"drawArrays"{white}?				{ fprintf(yyout,"%d ", func28sym); }
+"useProgram"{white}?				{ fprintf(yyout,"%d ", func29sym); }
+"getAttribLocation"{white}? 		{ fprintf(yyout,"%d ", func30sym); }
+
+"getUniformLocation"{white}? 		{ fprintf(yyout,"%d ", func31sym); }
+"pixelStorei"{white}?				{ fprintf(yyout,"%d ", func32sym); }
+"generateMipmap"{white}?			{ fprintf(yyout,"%d ", func33sym); }
+"uniformMatrix4fv"{white}? 			{ fprintf(yyout,"%d ", func34sym); }
+"uniform3fv"{white}?				{ fprintf(yyout,"%d ", func35sym); }
+"uniform1f"{white}?					{ fprintf(yyout,"%d ", func36sym); }
+"uniform1i"{white}? 				{ fprintf(yyout,"%d ", func37sym); }
+"drawArrays"{white}?				{ fprintf(yyout,"%d ", func38sym); }
+"useProgram"{white}?				{ fprintf(yyout,"%d ", func39sym); }
+"getAttribLocation"{white}? 		{ fprintf(yyout,"%d ", func40sym); }
 
 /*GLSL Functions*/
+"normalize"{white}? 			    { fprintf(yyout,"%d ", GLfunc1sym); }
+"dot"{white}?			    		{ fprintf(yyout,"%d ", GLfunc2sym); }
+"reflect"{white}?					{ fprintf(yyout,"%d ", GLfunc3sym); }
+"max"{white}? 	    				{ fprintf(yyout,"%d ", GLfunc4sym); }
+"texture2D"{white}?		    		{ fprintf(yyout,"%d ", GLfunc5sym); }
+
+/*GLSL Dedicated Variables*/
+"gl_Position"{white}? 			    { fprintf(yyout,"%d ", GLPOSsym); }
+"gl_FragColor"{white}? 			    { fprintf(yyout,"%d ", GLFRAGsym); }
 
 
 /*Other words*/
