@@ -12,7 +12,7 @@ rparentsym, commasym, semicolonsym, periodsym, becomessym,
 uintsym, bytesym, ifsym, thensym, whilesym,
 dosym, callsym, constsym, intsym, ubytesym,
 charsym, shortsym, elsesym, fixedsym, sizeisym, enumsym, intptrsym,
-sizeiptrsym, floatsym, bitfieldsym
+sizeiptrsym, floatsym, bitfieldsym, varsym
 } token_type;
 %}
 
@@ -35,8 +35,10 @@ white [ \t\n\r\0]
 
 /*RESERVED WORDS */
 
-/*Types */
+/*JS Types */
+"var"{white}?			{ fprintf(yyout,"%d ", varsym); }
 
+/*GLSL Types*/
 "boolean"{white}?		{ fprintf(yyout,"%d ", boolsym); }
 "byte"{white}?			{ fprintf(yyout,"%d ", bytesym); }
 "ubyte"{white}?			{ fprintf(yyout,"%d ", ubytesym); }
@@ -109,6 +111,11 @@ white [ \t\n\r\0]
 "TRIANGLE_STRIP"{white}? 		{ fprintf(yyout,"%d ", const35sym); }
 "TRIANGLE_FAN"{white}? 			{ fprintf(yyout,"%d ", const36sym); }
 
+/*JS Functions*/
+
+
+/*GLSL Functions*/
+
 
 /*Other words*/
 
@@ -119,7 +126,7 @@ white [ \t\n\r\0]
 "const"{white}?			{ fprintf(yyout,"%d ", constsym); }
 "else"{white}?			{ fprintf(yyout,"%d ", elsesym); }
 
-	/*Identifiers*/
+	/*Identifiers */
 {ID} {fprintf(yyout,"%d|%s ", identsym, yytext);}
 
 	/* Number */
@@ -144,7 +151,7 @@ white [ \t\n\r\0]
 "." 	{ fprintf(yyout,"%d ", periodsym); }
 
 
-	/*ERRORS*/
+	/*ERRORS */
 
 	/* eat up whitespace */
 
