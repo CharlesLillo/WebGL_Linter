@@ -1,7 +1,15 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+WebGL is basically just a bunch of C and Javascript.
+
+Right, Charley?
+
+Alright, well then our grammar is pretty damn simple:
+    if (it's C)
+        parse the C code
+    else if (it's Javascript)
+        parse the Javascript code
+    else
+        sell your neighbor's cat on Craigslist
+*/
 
 grammar WebGL_Parser_Assignment2p4;
