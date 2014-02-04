@@ -7,6 +7,24 @@ https://github.com/antlr/grammars-v4/blob/master/c/C.g4
 This grammar will be used to parse C-based parts of WebGL
 */
 
+/*
+TODO:
+1) Refactoring. Our WebGL grammar file will basically include the C
+grammar and the Javascript grammar together. Some of the rules from
+these two included files will likely collide, so each rule from each file
+should be refactored to include the prefix c_ or js_. For instance,
+pre-refactoring in this file:
+    genericAssocList
+    :   genericAssociation
+    |   genericAssocList ',' genericAssociation
+    ;
+post-refactoring:
+    c_genericAssocList
+    :   c_genericAssociation
+    |   c_genericAssocList ',' c_genericAssociation
+    ;
+*/
+
 
 /*
  [The "BSD licence"]
