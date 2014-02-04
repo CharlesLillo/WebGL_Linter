@@ -10,9 +10,23 @@ multsym, slashsym, oddsym, eqsym, neqsym,
 lessym, leqsym, gtrsym, geqsym, lparentsym,
 rparentsym, commasym, semicolonsym, periodsym, becomessym,
 uintsym, bytesym, ifsym, thensym, whilesym,
-dosym, callsym, constsym, intsym, ubytesym,
+dosym, callsym, constsym, intsym, ubytesym, quotsym,
 charsym, shortsym, elsesym, fixedsym, sizeisym, enumsym, intptrsym,
-sizeiptrsym, floatsym, bitfieldsym, varsym
+sizeiptrsym, floatsym, bitfieldsym, varsym, clampfsym, attribsym,
+unisym, varysym, vec4sym, vec3sym, vec2sym, mat4sym, mat3sym, mat2sym,
+sampsym, ushortsym, const1sym, const2sym, const3sym, const4sym, const5sym, const6sym,
+const7sym, const8sym, const9sym, const10sym, const11sym, const12sym, const13sym,
+const14sym, const15sym, const16sym, const17sym, const18sym, const19sym, const20sym,
+const21sym, const22sym, const23sym, const24sym, const25sym, const26sym, const27sym,
+const28sym, const29sym, const30sym, const31sym, const32sym, const33sym, const34sym,
+const35sym, const36sym, func1sym, func2sym, func3sym, func4sym, func5sym, func6sym,
+func7sym, func8sym, func9sym, func10sym, func11sym, func12sym, func13sym,
+func14sym, func15sym, func16sym, func17sym, func18sym, func19sym, func20sym,
+func21sym, func22sym, func23sym, func24sym, func25sym, func26sym, func27sym,
+func28sym, func29sym, func30sym, func31sym, func32sym, func33sym, func34sym,
+func35sym, func36sym, func37sym, func38sym, func39sym, func40sym, GLPOSsym, GLFRAGsym,
+GLfunc1sym, GLfunc2sym, GLfunc3sym, GLfunc4sym, GLfunc5sym, DONTCAREsym
+
 } token_type;
 %}
 
@@ -33,12 +47,12 @@ white [ \t\n\r\0]
 %%
 
 
-/*RESERVED WORDS */
+	/*RESERVED WORDS*/
 
-/*JS Types */
+	/*JS Types*/
 "var"{white}?			{ fprintf(yyout,"%d ", varsym); }
 
-/*GLSL Types*/
+	/*GLSL Types*/
 "boolean"{white}?		{ fprintf(yyout,"%d ", boolsym); }
 "byte"{white}?			{ fprintf(yyout,"%d ", bytesym); }
 "ubyte"{white}?			{ fprintf(yyout,"%d ", ubytesym); }
@@ -56,8 +70,7 @@ white [ \t\n\r\0]
 "clampf"{white}?		{ fprintf(yyout,"%d ", clampfsym);}
 "bitfield"{white}?		{ fprintf(yyout,"%d ", bitfieldsym);}
 
-/*GL Types */
-
+	/*GL Types */
 "attribute"{white}?		{ fprintf(yyout,"%d ", attribsym); }
 "uniform"{white}?		{ fprintf(yyout,"%d ", unisym); }
 "varying"{white}?		{ fprintf(yyout,"%d ", varysym); }
@@ -69,8 +82,7 @@ white [ \t\n\r\0]
 "mat2"{white}?			{ fprintf(yyout,"%d ", mat2sym);}
 "sampler2D"{white}?		{ fprintf(yyout,"%d ", sampsym); }
 
-/*GL Required Constants*/
-
+	/*GL Required Constants*/
 "COLOR_BUFFER_BIT"{white}? 		{ fprintf(yyout,"%d ", const1sym); }
 "DEPTH_BUFFER_BIT"{white}? 		{ fprintf(yyout,"%d ", const2sym); }
 "STENCIL_BUFFER_BIT "{white}?	{ fprintf(yyout,"%d ", const3sym); }
@@ -103,7 +115,7 @@ white [ \t\n\r\0]
 "LINEAR_MIPMAP_LINEAR"{white}?	{ fprintf(yyout,"%d ", const28sym); }
 "UNPACK_ALIGNMENT"{white}?		{ fprintf(yyout,"%d ", const29sym); }
 "ELEMENT_ARRAY_BUFFER"{white}?	{ fprintf(yyout,"%d ", const30sym); }
-
+	
 "POINT"{white}? 				{ fprintf(yyout,"%d ", const31sym); }
 "LINES"{white}? 				{ fprintf(yyout,"%d ", const32sym); }
 "LINE_LOOP"{white}? 			{ fprintf(yyout,"%d ", const33sym); }
@@ -111,65 +123,64 @@ white [ \t\n\r\0]
 "TRIANGLE_STRIP"{white}? 		{ fprintf(yyout,"%d ", const35sym); }
 "TRIANGLE_FAN"{white}? 			{ fprintf(yyout,"%d ", const36sym); }
 
-/*JS Functions - NOTE, many of these will actually require parameters and parenthesis, not whitespace after */
+	/*JS Functions - NOTE, many of these will actually require parameters and parenthesis, not whitespace after */
+"getContext" 			    { fprintf(yyout,"%d ", func1sym); }
+"getExtension"			    { fprintf(yyout,"%d ", func2sym); }
+"clear"						{ fprintf(yyout,"%d ", func3sym); }
+"createFramebuffer" 	   	{ fprintf(yyout,"%d ", func4sym); }
+"bindFramebuffer"		    { fprintf(yyout,"%d ", func5sym); }
+"createTexture"				{ fprintf(yyout,"%d ", func6sym); }
+"bindTexture" 			    { fprintf(yyout,"%d ", func7sym); }
+"texParameteri"				{ fprintf(yyout,"%d ", func8sym); }
+"texImage2D"			    { fprintf(yyout,"%d ", func9sym); }
+"createRenderbuffer" 	    { fprintf(yyout,"%d ", func10sym); }
 
-"getContext"{white}? 			    { fprintf(yyout,"%d ", func1sym); }
-"getExtension"{white}?			    { fprintf(yyout,"%d ", func2sym); }
-"clear"{white}?					    { fprintf(yyout,"%d ", func3sym); }
-"createFramebuffer"{white}? 	    { fprintf(yyout,"%d ", func4sym); }
-"bindFramebuffer"{white}?		    { fprintf(yyout,"%d ", func5sym); }
-"createTexture"{white}?			    { fprintf(yyout,"%d ", func6sym); }
-"bindTexture"{white}? 			    { fprintf(yyout,"%d ", func7sym); }
-"texParameteri"{white}?			    { fprintf(yyout,"%d ", func8sym); }
-"texImage2D"{white}?			    { fprintf(yyout,"%d ", func9sym); }
-"createRenderbuffer"{white}? 	    { fprintf(yyout,"%d ", func10sym); }
+"bindRenderbuffer" 			{ fprintf(yyout,"%d ", func11sym); }
+"renderbufferStorage"		{ fprintf(yyout,"%d ", func12sym); }
+"framebufferTexture2D"		{ fprintf(yyout,"%d ", func13sym); }
+"framebufferRenderbuffer" 	{ fprintf(yyout,"%d ", func14sym); }
+"readPixels"				{ fprintf(yyout,"%d ", func15sym); }
+"clearColor"				{ fprintf(yyout,"%d ", func16sym); }
+"enable" 					{ fprintf(yyout,"%d ", func17sym); }
+"createBuffer"				{ fprintf(yyout,"%d ", func18sym); }
+"bufferData"				{ fprintf(yyout,"%d ", func19sym); }
+"bindBuffer" 				{ fprintf(yyout,"%d ", func20sym); }
 
-"bindRenderbuffer"{white}? 			{ fprintf(yyout,"%d ", func11sym); }
-"renderbufferStorage"{white}?		{ fprintf(yyout,"%d ", func12sym); }
-"framebufferTexture2D"{white}?		{ fprintf(yyout,"%d ", func13sym); }
-"framebufferRenderbuffer"{white}? 	{ fprintf(yyout,"%d ", func14sym); }
-"readPixels"{white}?				{ fprintf(yyout,"%d ", func15sym); }
-"clearColor"{white}?				{ fprintf(yyout,"%d ", func16sym); }
-"enable"{white}? 					{ fprintf(yyout,"%d ", func17sym); }
-"createBuffer"{white}?				{ fprintf(yyout,"%d ", func18sym); }
-"bufferData"{white}?				{ fprintf(yyout,"%d ", func19sym); }
-"bindBuffer"{white}? 				{ fprintf(yyout,"%d ", func20sym); }
+"uniform4fv" 				{ fprintf(yyout,"%d ", func21sym); }
+"enableVertexAttribArray"	{ fprintf(yyout,"%d ", func22sym); }
+"vertexAttribPointer"		{ fprintf(yyout,"%d ", func23sym); }
+"disableVertexAttribArray" 	{ fprintf(yyout,"%d ", func24sym); }
+"vertexAttrib3f"			{ fprintf(yyout,"%d ", func25sym); }
+"activeTexture"				{ fprintf(yyout,"%d ", func26sym); }
+"uniform1i" 				{ fprintf(yyout,"%d ", func27sym); }
+"drawArrays"				{ fprintf(yyout,"%d ", func28sym); }
+"useProgram"				{ fprintf(yyout,"%d ", func29sym); }
+"getAttribLocation" 		{ fprintf(yyout,"%d ", func30sym); }
 
-"uniform4fv"{white}? 				{ fprintf(yyout,"%d ", func21sym); }
-"enableVertexAttribArray"{white}?	{ fprintf(yyout,"%d ", func22sym); }
-"vertexAttribPointer"{white}?		{ fprintf(yyout,"%d ", func23sym); }
-"disableVertexAttribArray"{white}? 	{ fprintf(yyout,"%d ", func24sym); }
-"vertexAttrib3f"{white}?			{ fprintf(yyout,"%d ", func25sym); }
-"activeTexture"{white}?				{ fprintf(yyout,"%d ", func26sym); }
-"uniform1i"{white}? 				{ fprintf(yyout,"%d ", func27sym); }
-"drawArrays"{white}?				{ fprintf(yyout,"%d ", func28sym); }
-"useProgram"{white}?				{ fprintf(yyout,"%d ", func29sym); }
-"getAttribLocation"{white}? 		{ fprintf(yyout,"%d ", func30sym); }
+"getUniformLocation" 		{ fprintf(yyout,"%d ", func31sym); }
+"pixelStorei"				{ fprintf(yyout,"%d ", func32sym); }
+"generateMipmap"			{ fprintf(yyout,"%d ", func33sym); }
+"uniformMatrix4fv" 			{ fprintf(yyout,"%d ", func34sym); }
+"uniform3fv"				{ fprintf(yyout,"%d ", func35sym); }
+"uniform1f"					{ fprintf(yyout,"%d ", func36sym); }
+"uniform1i" 				{ fprintf(yyout,"%d ", func37sym); }
+"drawArrays"				{ fprintf(yyout,"%d ", func38sym); }
+"useProgram"				{ fprintf(yyout,"%d ", func39sym); }
+"getAttribLocation" 		{ fprintf(yyout,"%d ", func40sym); }
 
-"getUniformLocation"{white}? 		{ fprintf(yyout,"%d ", func31sym); }
-"pixelStorei"{white}?				{ fprintf(yyout,"%d ", func32sym); }
-"generateMipmap"{white}?			{ fprintf(yyout,"%d ", func33sym); }
-"uniformMatrix4fv"{white}? 			{ fprintf(yyout,"%d ", func34sym); }
-"uniform3fv"{white}?				{ fprintf(yyout,"%d ", func35sym); }
-"uniform1f"{white}?					{ fprintf(yyout,"%d ", func36sym); }
-"uniform1i"{white}? 				{ fprintf(yyout,"%d ", func37sym); }
-"drawArrays"{white}?				{ fprintf(yyout,"%d ", func38sym); }
-"useProgram"{white}?				{ fprintf(yyout,"%d ", func39sym); }
-"getAttribLocation"{white}? 		{ fprintf(yyout,"%d ", func40sym); }
-
-/*GLSL Functions*/
+	/*GLSL Functions*/
 "normalize"{white}? 			    { fprintf(yyout,"%d ", GLfunc1sym); }
 "dot"{white}?			    		{ fprintf(yyout,"%d ", GLfunc2sym); }
 "reflect"{white}?					{ fprintf(yyout,"%d ", GLfunc3sym); }
 "max"{white}? 	    				{ fprintf(yyout,"%d ", GLfunc4sym); }
 "texture2D"{white}?		    		{ fprintf(yyout,"%d ", GLfunc5sym); }
 
-/*GLSL Dedicated Variables*/
+	/*GLSL Dedicated Variables*/
 "gl_Position"{white}? 			    { fprintf(yyout,"%d ", GLPOSsym); }
 "gl_FragColor"{white}? 			    { fprintf(yyout,"%d ", GLFRAGsym); }
 
 
-/*Other words*/
+	/*Other words*/
 
 "if"{white}?			{ fprintf(yyout,"%d ", ifsym);}
 "while"{white}?			{ fprintf(yyout,"%d ", whilesym); }
@@ -201,16 +212,16 @@ white [ \t\n\r\0]
 "=" 	{ fprintf(yyout,"%d ", eqsym); }
 ";" 	{ fprintf(yyout,"%d ", semicolonsym); }
 "." 	{ fprintf(yyout,"%d ", periodsym); }
+"\"" 	{ fprintf(yyout,"%d ", quotsym); }
 
 
 	/*ERRORS */
 
 	/* eat up whitespace */
-
 {white}+
 
 	/*Uncaught symbols*/
-.{ printf("%d %s\n ", inv4, yytext); }
+.		{ printf("%d %s\n ", DONTCAREsym, yytext); }
 
 
 %% 
