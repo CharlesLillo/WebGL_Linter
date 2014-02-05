@@ -24,21 +24,16 @@ func7sym, func8sym, func9sym, func10sym, func11sym, func12sym, func13sym,
 func14sym, func15sym, func16sym, func17sym, func18sym, func19sym, func20sym,
 func21sym, func22sym, func23sym, func24sym, func25sym, func26sym, func27sym,
 func28sym, func29sym, func30sym, func31sym, func32sym, func33sym, func34sym,
-func35sym, func36sym, func37sym, func38sym, func39sym, func40sym, GLPOSsym, GLFRAGsym,
+func35sym, func36sym, func37sym, func38sym, func39sym, func40sym, func41sym,
+func42sym, func43sym, GLPOSsym, GLFRAGsym,
 GLfunc1sym, GLfunc2sym, GLfunc3sym, GLfunc4sym, GLfunc5sym, DONTCAREsym
 
 } token_type;
 %}
 
 	/*Identifier Macros*/
-digit       [0-9]
-integer   	{digit}{1,5}
 ID       	[a-zA-Z][a-zA-Z0-9]{0,10}
-
 	/*Error Macros*/
-ID_long		[a-zA-Z][a-zA-Z0-9]{11,}
-int_long	{digit}{6,}
-ID_wrong	{digit}+[a-zA-Z][a-zA-Z0-9]*
 
 	/*Whitespace Macro*/
 white [ \t\n\r\0]
@@ -89,7 +84,7 @@ white [ \t\n\r\0]
 "FRAMEBUFFER"{white}?			{ fprintf(yyout,"%d ", const4sym); }
 "RENDERBUFFER"{white}?			{ fprintf(yyout,"%d ", const5sym); }
 "TEXTURE_2D"{white}?			{ fprintf(yyout,"%d ", const6sym); }
-"TEXTURE_MAG_FILTER"{white}?	{ fprintf(yyout,"%d ", const7sym); }
+"RGB"{white}?					{ fprintf(yyout,"%d ", const7sym); }
 "NEAREST"{white}?				{ fprintf(yyout,"%d ", const8sym); }
 "RGBA"{white}?					{ fprintf(yyout,"%d ", const9sym); }
 "UNSIGNED_BYTE"{white}?			{ fprintf(yyout,"%d ", const10sym); }
@@ -163,17 +158,21 @@ white [ \t\n\r\0]
 "uniformMatrix4fv" 			{ fprintf(yyout,"%d ", func34sym); }
 "uniform3fv"				{ fprintf(yyout,"%d ", func35sym); }
 "uniform1f"					{ fprintf(yyout,"%d ", func36sym); }
-"uniform1i" 				{ fprintf(yyout,"%d ", func37sym); }
-"drawArrays"				{ fprintf(yyout,"%d ", func38sym); }
-"useProgram"				{ fprintf(yyout,"%d ", func39sym); }
-"getAttribLocation" 		{ fprintf(yyout,"%d ", func40sym); }
+"viewport" 					{ fprintf(yyout,"%d ", func37sym); }
+"shaderSource"				{ fprintf(yyout,"%d ", func38sym); }
+"compileShader"				{ fprintf(yyout,"%d ", func39sym); }
+"attachShader" 				{ fprintf(yyout,"%d ", func40sym); }
+
+"linkProgram" 				{ fprintf(yyout,"%d ", func41sym); }
+"createProgram"				{ fprintf(yyout,"%d ", func42sym); }
+("experimental-")?"webgl"	{ fprintf(yyout,"%d ", func43sym); }
 
 	/*GLSL Functions*/
-"normalize"{white}? 			    { fprintf(yyout,"%d ", GLfunc1sym); }
-"dot"{white}?			    		{ fprintf(yyout,"%d ", GLfunc2sym); }
-"reflect"{white}?					{ fprintf(yyout,"%d ", GLfunc3sym); }
-"max"{white}? 	    				{ fprintf(yyout,"%d ", GLfunc4sym); }
-"texture2D"{white}?		    		{ fprintf(yyout,"%d ", GLfunc5sym); }
+"normalize" 			    { fprintf(yyout,"%d ", GLfunc1sym); }
+"dot"			    		{ fprintf(yyout,"%d ", GLfunc2sym); }
+"reflect"					{ fprintf(yyout,"%d ", GLfunc3sym); }
+"max" 	    				{ fprintf(yyout,"%d ", GLfunc4sym); }
+"texture2D"		    		{ fprintf(yyout,"%d ", GLfunc5sym); }
 
 	/*GLSL Dedicated Variables*/
 "gl_Position"{white}? 			    { fprintf(yyout,"%d ", GLPOSsym); }
@@ -189,12 +188,6 @@ white [ \t\n\r\0]
 "const"{white}?			{ fprintf(yyout,"%d ", constsym); }
 "else"{white}?			{ fprintf(yyout,"%d ", elsesym); }
 
-	/*Identifiers */
-{ID} {fprintf(yyout,"%d|%s ", identsym, yytext);}
-
-	/* Number */
-{integer}     { fprintf(yyout,"%d|%s ", numbersym, yytext); }
-
 	/* Special Symbols */
 "<=" 	{ fprintf(yyout,"%d ", leqsym); }
 ">=" 	{ fprintf(yyout,"%d ", geqsym); }
@@ -202,14 +195,13 @@ white [ \t\n\r\0]
 ">" 	{ fprintf(yyout,"%d ", gtrsym); }
 "<" 	{ fprintf(yyout,"%d ", lessym); }
 "+"		{ fprintf(yyout,"%d ", plussym); }
-"=" 	{ fprintf(yyout,"%d ", becomessym); }
+"=" 	{ fprintf(yyout,"%d ", eqsym); }
 "-"		{ fprintf(yyout,"%d ", minussym); }
 "*"		{ fprintf(yyout,"%d ", multsym); }  /* this will fire for pointers, possibly adjust def */
 "/"		{ fprintf(yyout,"%d ", slashsym); }
 "("		{ fprintf(yyout,"%d ", lparentsym); }
 ")"		{ fprintf(yyout,"%d ", rparentsym); }
 "," 	{ fprintf(yyout,"%d ", commasym); }
-"=" 	{ fprintf(yyout,"%d ", eqsym); }
 ";" 	{ fprintf(yyout,"%d ", semicolonsym); }
 "." 	{ fprintf(yyout,"%d ", periodsym); }
 "\"" 	{ fprintf(yyout,"%d ", quotsym); }
@@ -221,7 +213,9 @@ white [ \t\n\r\0]
 {white}+
 
 	/*Uncaught symbols*/
-.		{ printf("%d %s\n ", DONTCAREsym, yytext); }
+{ID}	{ printf("%d", DONTCAREsym); }
+.		{ printf("%d", DONTCAREsym); }
+
 
 
 %% 
