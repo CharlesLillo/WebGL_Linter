@@ -26,8 +26,8 @@ func21sym, func22sym, func23sym, func24sym, func25sym, func26sym, func27sym,
 func28sym, func29sym, func30sym, func31sym, func32sym, func33sym, func34sym,
 func35sym, func36sym, func37sym, func38sym, func39sym, func40sym, func41sym,
 func42sym, func43sym, GLPOSsym, GLFRAGsym,
-GLfunc1sym, GLfunc2sym, GLfunc3sym, GLfunc4sym, GLfunc5sym, DONTCAREsym, nullsym
-
+GLfunc1sym, GLfunc2sym, GLfunc3sym, GLfunc4sym, GLfunc5sym, DONTCAREsym, nullsym,
+truesym, falsesym
 } token_type;
 %}
 
@@ -188,6 +188,8 @@ white [ \t\n\r\0]
 "const"{white}?			{ fprintf(yyout,"%d ", constsym); }
 "else"{white}?			{ fprintf(yyout,"%d ", elsesym); }
 "null"{white}?			{ fprintf(yyout,"%d ", nullsym); }
+"true"{white}?			{ fprintf(yyout,"%d ", truesym); }
+"false"{white}?			{ fprintf(yyout,"%d ", falsesym); }
 
 	/* Special Symbols */
 "<=" 	{ fprintf(yyout,"%d ", leqsym); }
