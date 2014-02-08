@@ -53,7 +53,7 @@ bindFrameBuffer: func5sym lparentsym const19sym commasym const4sym rparentsym se
 createTexture: func6sym lparentsym rparentsym semicolonsym;
 bindTexture: func7sym lparentsym const6sym commasym DONTCAREsym rparentsym semicolonsym;
 texParameteri: func8sym lparentsym (const6sym || *) rparentsym semicolonsym;
-texImage2D: func9sym lparentsym (const6sym || *) commasym uintsym rparentsym semicolonsym;
+texImage2D: func9sym lparentsym (const6sym || *) commasym instym commasym (const9sym || *) commasym instym commasym instym commasym instym commasym (const9sym || *) commasym (const10sym || *) commasym (nullsym || *) rparentsym semicolonsym;
 : funcsym lparentsym rparentsym semicolonsym;
 : funcsym lparentsym rparentsym semicolonsym;
 : funcsym lparentsym rparentsym semicolonsym;
