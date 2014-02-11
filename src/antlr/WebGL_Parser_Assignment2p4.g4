@@ -1,92 +1,28 @@
+/**
+A sloppy, first attempt grammar. Good enough for hw2p4.
+*/
+
 grammar WebGL_Parser_Assignment2p4;
 
-/** XML parser derived from ANTLR v4 ref guide book example */
-//parser grammar XMLParser;
+document    :   htmlElement ;
 
-//options { tokenVocab=XMLLexer; }
+/*TODO: allow an arbitrary number of arbitrary elements before and after
+        headElement*/
+htmlElement : '<html>' Whitespace* headElement Whitespace* '</html>' ;
 
-document    :   prolog? misc* element misc*;
+/*TODO: this is just for testing */
+headElement :   '<head>' Whitespace* vertexCodeScript Whitespace* fragmentCodeScript Whitespace* javascript Whitespace* '</head>' ;
 
-prolog      :   XMLDeclOpen attribute* SPECIAL_CLOSE ;
+content     :   chardata? ;
 
-content     :   chardata?
-                ((element | reference | CDATA | PI | COMMENT) chardata?)* ;
+chardata    :   TEXT | SEA_WS ; 
 
-element     :   '<' Name attribute* '>' content '<' '/' Name '>'
-            |   '<' Name attribute* '/>'
-            ;
+/*TODO: fix the glaring inadequacies of this grammar*/
+vertexCodeScript    :   '<script id="vertex-code" type="x-shader">' Whitespace* content Whitespace* '</script>' ;
+fragmentCodeScript  :   '<script id="fragment-code" type="x-shader">' Whitespace* content Whitespace* '</script>' ;
+javascript  :   '<script type="text/javascript">' Whitespace* content Whitespace* '</script>' ;
 
-reference   :   EntityRef | CharRef ;
+Whitespace  :   [ \t\r\n]+  -> skip ;
 
-attribute   :   Name '=' STRING ; // Our STRING is AttValue in spec
-
-/** ``All text that is not markup constitutes the character data of
- *  the document.''
- */
-chardata    :   TEXT | SEA_WS ;
-
-misc        :   COMMENT | PI | SEA_WS ;
-
-
-// Default "mode": Everything OUTSIDE of a tag
-COMMENT     :   '<!--' .*? '-->' ;
-CDATA       :   '<![CDATA[' .*? ']]>' ;
-/** Scarf all DTD stuff, Entity Declarations like <!ENTITY ...>,
- *  and Notation Declarations <!NOTATION ...>
- */
-DTD         :   '<!' .*? '>'            -> skip ; 
-EntityRef   :   '&' Name ';' ;
-CharRef     :   '&#' DIGIT+ ';'
-            |   '&#x' HEXDIGIT+ ';'
-            ;
-SEA_WS      :   (' '|'\t'|'\r'? '\n')+ ;
-
-OPEN        :   '<'                     -> pushMode(INSIDE) ;
-XMLDeclOpen :   '<?xml' S               -> pushMode(INSIDE) ;
-SPECIAL_OPEN:   '<?' Name               -> more, pushMode(PROC_INSTR) ;
-
-TEXT        :   ~[<&]+ ;        // match any 16 bit char other than < and &
-
-// ----------------- Everything INSIDE of a tag ---------------------
-mode INSIDE;
-
-CLOSE       :   '>'                     -> popMode ;
-SPECIAL_CLOSE:  '?>'                    -> popMode ; // close <?xml...?>
-SLASH_CLOSE :   '/>'                    -> popMode ;
-SLASH       :   '/' ;
-EQUALS      :   '=' ;
-STRING      :   '"' ~[<"]* '"'
-            |   '\'' ~[<']* '\''
-            ;
-Name        :   NameStartChar NameChar* ;
-S           :   [ \t\r\n]               -> skip ;
-
-fragment
-HEXDIGIT    :   [a-fA-F0-9] ;
-
-fragment
-DIGIT       :   [0-9] ;
-
-fragment
-NameChar    :   NameStartChar
-            |   '-' | '_' | '.' | DIGIT 
-            |   '\u00B7'
-            |   '\u0300'..'\u036F'
-            |   '\u203F'..'\u2040'
-            ;
-
-fragment
-NameStartChar
-            :   [:a-zA-Z]
-            |   '\u2070'..'\u218F' 
-            |   '\u2C00'..'\u2FEF' 
-            |   '\u3001'..'\uD7FF' 
-            |   '\uF900'..'\uFDCF' 
-            |   '\uFDF0'..'\uFFFD'
-            ;
-
-// ----------------- Handle <? ... ?> ---------------------
-mode PROC_INSTR;
-
-PI          :   '?>'                    -> popMode ; // close <?...?>
-IGNORE      :   .                       -> more ;
+TEXT        :   ~['</']+ ;  //I don't know why this works but it does. Then again, it probably doesn't work.
+SEA_WS      :   (' '|'\t'|'\r'? '\n')+ ; 
