@@ -27,7 +27,7 @@ vertexCodeScript    :   '<script id="vertex-code" type="x-shader">' Whitespace* 
 fragmentCodeScript  :   '<script id="fragment-code" type="x-shader">' Whitespace* content Whitespace* '</script>' ;
 javascript  :   '<script type="text/javascript">' Whitespace* content Whitespace* '</script>' ;
 
-Whitespace  :   [ \t\r\n]+  -> skip ;
+Whitespace  :   [ \t\r\n]+;
 
 TEXT        :   ~['</']+ ;  //I don't know why this works but it does. Then again, it probably doesn't work.
 SEA_WS      :   (' '|'\t'|'\r'? '\n')+ ; 

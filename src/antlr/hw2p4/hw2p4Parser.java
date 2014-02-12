@@ -1,4 +1,4 @@
-// Generated from C:\Users\tobyt_000\Development\program analysis\assignment 2\WebGL_Linter\src\antlr\hw2p4\hw2p4.g4 by ANTLR 4.1
+// Generated from hw2p4.g4 by ANTLR 4.0
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -150,18 +150,18 @@ public class hw2p4Parser extends Parser {
 	}
 
 	public static class HeadElementContext extends ParserRuleContext {
-		public FragmentCodeScriptContext fragmentCodeScript() {
-			return getRuleContext(FragmentCodeScriptContext.class,0);
-		}
 		public TerminalNode Whitespace(int i) {
 			return getToken(hw2p4Parser.Whitespace, i);
 		}
-		public List<TerminalNode> Whitespace() { return getTokens(hw2p4Parser.Whitespace); }
 		public JavascriptContext javascript() {
 			return getRuleContext(JavascriptContext.class,0);
 		}
 		public VertexCodeScriptContext vertexCodeScript() {
 			return getRuleContext(VertexCodeScriptContext.class,0);
+		}
+		public List<TerminalNode> Whitespace() { return getTokens(hw2p4Parser.Whitespace); }
+		public FragmentCodeScriptContext fragmentCodeScript() {
+			return getRuleContext(FragmentCodeScriptContext.class,0);
 		}
 		public HeadElementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -335,13 +335,13 @@ public class hw2p4Parser extends Parser {
 	}
 
 	public static class VertexCodeScriptContext extends ParserRuleContext {
+		public ContentContext content() {
+			return getRuleContext(ContentContext.class,0);
+		}
 		public TerminalNode Whitespace(int i) {
 			return getToken(hw2p4Parser.Whitespace, i);
 		}
 		public List<TerminalNode> Whitespace() { return getTokens(hw2p4Parser.Whitespace); }
-		public ContentContext content() {
-			return getRuleContext(ContentContext.class,0);
-		}
 		public VertexCodeScriptContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -406,13 +406,13 @@ public class hw2p4Parser extends Parser {
 	}
 
 	public static class FragmentCodeScriptContext extends ParserRuleContext {
+		public ContentContext content() {
+			return getRuleContext(ContentContext.class,0);
+		}
 		public TerminalNode Whitespace(int i) {
 			return getToken(hw2p4Parser.Whitespace, i);
 		}
 		public List<TerminalNode> Whitespace() { return getTokens(hw2p4Parser.Whitespace); }
-		public ContentContext content() {
-			return getRuleContext(ContentContext.class,0);
-		}
 		public FragmentCodeScriptContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -477,13 +477,13 @@ public class hw2p4Parser extends Parser {
 	}
 
 	public static class JavascriptContext extends ParserRuleContext {
+		public ContentContext content() {
+			return getRuleContext(ContentContext.class,0);
+		}
 		public TerminalNode Whitespace(int i) {
 			return getToken(hw2p4Parser.Whitespace, i);
 		}
 		public List<TerminalNode> Whitespace() { return getTokens(hw2p4Parser.Whitespace); }
-		public ContentContext content() {
-			return getRuleContext(ContentContext.class,0);
-		}
 		public JavascriptContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -548,41 +548,38 @@ public class hw2p4Parser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\uacf5\uee8c\u4f5d\u8b0d\u4a45\u78bd\u1b2f\u3378\3\rx\4\2\t\2\4\3\t"+
-		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\3\2\3\2\3\3\3\3\7\3"+
-		"\27\n\3\f\3\16\3\32\13\3\3\3\3\3\7\3\36\n\3\f\3\16\3!\13\3\3\3\3\3\3\4"+
-		"\3\4\7\4\'\n\4\f\4\16\4*\13\4\3\4\3\4\7\4.\n\4\f\4\16\4\61\13\4\3\4\3"+
-		"\4\7\4\65\n\4\f\4\16\48\13\4\3\4\3\4\7\4<\n\4\f\4\16\4?\13\4\3\4\3\4\3"+
-		"\5\5\5D\n\5\3\6\3\6\3\7\3\7\7\7J\n\7\f\7\16\7M\13\7\3\7\3\7\7\7Q\n\7\f"+
-		"\7\16\7T\13\7\3\7\3\7\3\b\3\b\7\bZ\n\b\f\b\16\b]\13\b\3\b\3\b\7\ba\n\b"+
-		"\f\b\16\bd\13\b\3\b\3\b\3\t\3\t\7\tj\n\t\f\t\16\tm\13\t\3\t\3\t\7\tq\n"+
-		"\t\f\t\16\tt\13\t\3\t\3\t\3\t\2\n\2\4\6\b\n\f\16\20\2\3\3\2\f\r|\2\22"+
-		"\3\2\2\2\4\24\3\2\2\2\6$\3\2\2\2\bC\3\2\2\2\nE\3\2\2\2\fG\3\2\2\2\16W"+
-		"\3\2\2\2\20g\3\2\2\2\22\23\5\4\3\2\23\3\3\2\2\2\24\30\7\3\2\2\25\27\7"+
-		"\13\2\2\26\25\3\2\2\2\27\32\3\2\2\2\30\26\3\2\2\2\30\31\3\2\2\2\31\33"+
-		"\3\2\2\2\32\30\3\2\2\2\33\37\5\6\4\2\34\36\7\13\2\2\35\34\3\2\2\2\36!"+
-		"\3\2\2\2\37\35\3\2\2\2\37 \3\2\2\2 \"\3\2\2\2!\37\3\2\2\2\"#\7\t\2\2#"+
-		"\5\3\2\2\2$(\7\4\2\2%\'\7\13\2\2&%\3\2\2\2\'*\3\2\2\2(&\3\2\2\2()\3\2"+
-		"\2\2)+\3\2\2\2*(\3\2\2\2+/\5\f\7\2,.\7\13\2\2-,\3\2\2\2.\61\3\2\2\2/-"+
-		"\3\2\2\2/\60\3\2\2\2\60\62\3\2\2\2\61/\3\2\2\2\62\66\5\16\b\2\63\65\7"+
-		"\13\2\2\64\63\3\2\2\2\658\3\2\2\2\66\64\3\2\2\2\66\67\3\2\2\2\679\3\2"+
-		"\2\28\66\3\2\2\29=\5\20\t\2:<\7\13\2\2;:\3\2\2\2<?\3\2\2\2=;\3\2\2\2="+
-		">\3\2\2\2>@\3\2\2\2?=\3\2\2\2@A\7\5\2\2A\7\3\2\2\2BD\5\n\6\2CB\3\2\2\2"+
-		"CD\3\2\2\2D\t\3\2\2\2EF\t\2\2\2F\13\3\2\2\2GK\7\7\2\2HJ\7\13\2\2IH\3\2"+
-		"\2\2JM\3\2\2\2KI\3\2\2\2KL\3\2\2\2LN\3\2\2\2MK\3\2\2\2NR\5\b\5\2OQ\7\13"+
-		"\2\2PO\3\2\2\2QT\3\2\2\2RP\3\2\2\2RS\3\2\2\2SU\3\2\2\2TR\3\2\2\2UV\7\b"+
-		"\2\2V\r\3\2\2\2W[\7\6\2\2XZ\7\13\2\2YX\3\2\2\2Z]\3\2\2\2[Y\3\2\2\2[\\"+
-		"\3\2\2\2\\^\3\2\2\2][\3\2\2\2^b\5\b\5\2_a\7\13\2\2`_\3\2\2\2ad\3\2\2\2"+
-		"b`\3\2\2\2bc\3\2\2\2ce\3\2\2\2db\3\2\2\2ef\7\b\2\2f\17\3\2\2\2gk\7\n\2"+
-		"\2hj\7\13\2\2ih\3\2\2\2jm\3\2\2\2ki\3\2\2\2kl\3\2\2\2ln\3\2\2\2mk\3\2"+
-		"\2\2nr\5\b\5\2oq\7\13\2\2po\3\2\2\2qt\3\2\2\2rp\3\2\2\2rs\3\2\2\2su\3"+
-		"\2\2\2tr\3\2\2\2uv\7\b\2\2v\21\3\2\2\2\17\30\37(/\66=CKR[bkr";
+		"\2\3\rx\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t"+
+		"\t\3\2\3\2\3\3\3\3\7\3\27\n\3\f\3\16\3\32\13\3\3\3\3\3\7\3\36\n\3\f\3"+
+		"\16\3!\13\3\3\3\3\3\3\4\3\4\7\4\'\n\4\f\4\16\4*\13\4\3\4\3\4\7\4.\n\4"+
+		"\f\4\16\4\61\13\4\3\4\3\4\7\4\65\n\4\f\4\16\48\13\4\3\4\3\4\7\4<\n\4\f"+
+		"\4\16\4?\13\4\3\4\3\4\3\5\5\5D\n\5\3\6\3\6\3\7\3\7\7\7J\n\7\f\7\16\7M"+
+		"\13\7\3\7\3\7\7\7Q\n\7\f\7\16\7T\13\7\3\7\3\7\3\b\3\b\7\bZ\n\b\f\b\16"+
+		"\b]\13\b\3\b\3\b\7\ba\n\b\f\b\16\bd\13\b\3\b\3\b\3\t\3\t\7\tj\n\t\f\t"+
+		"\16\tm\13\t\3\t\3\t\7\tq\n\t\f\t\16\tt\13\t\3\t\3\t\3\t\2\n\2\4\6\b\n"+
+		"\f\16\20\2\3\3\f\r|\2\22\3\2\2\2\4\24\3\2\2\2\6$\3\2\2\2\bC\3\2\2\2\n"+
+		"E\3\2\2\2\fG\3\2\2\2\16W\3\2\2\2\20g\3\2\2\2\22\23\5\4\3\2\23\3\3\2\2"+
+		"\2\24\30\7\3\2\2\25\27\7\13\2\2\26\25\3\2\2\2\27\32\3\2\2\2\30\26\3\2"+
+		"\2\2\30\31\3\2\2\2\31\33\3\2\2\2\32\30\3\2\2\2\33\37\5\6\4\2\34\36\7\13"+
+		"\2\2\35\34\3\2\2\2\36!\3\2\2\2\37\35\3\2\2\2\37 \3\2\2\2 \"\3\2\2\2!\37"+
+		"\3\2\2\2\"#\7\t\2\2#\5\3\2\2\2$(\7\4\2\2%\'\7\13\2\2&%\3\2\2\2\'*\3\2"+
+		"\2\2(&\3\2\2\2()\3\2\2\2)+\3\2\2\2*(\3\2\2\2+/\5\f\7\2,.\7\13\2\2-,\3"+
+		"\2\2\2.\61\3\2\2\2/-\3\2\2\2/\60\3\2\2\2\60\62\3\2\2\2\61/\3\2\2\2\62"+
+		"\66\5\16\b\2\63\65\7\13\2\2\64\63\3\2\2\2\658\3\2\2\2\66\64\3\2\2\2\66"+
+		"\67\3\2\2\2\679\3\2\2\28\66\3\2\2\29=\5\20\t\2:<\7\13\2\2;:\3\2\2\2<?"+
+		"\3\2\2\2=;\3\2\2\2=>\3\2\2\2>@\3\2\2\2?=\3\2\2\2@A\7\5\2\2A\7\3\2\2\2"+
+		"BD\5\n\6\2CB\3\2\2\2CD\3\2\2\2D\t\3\2\2\2EF\t\2\2\2F\13\3\2\2\2GK\7\7"+
+		"\2\2HJ\7\13\2\2IH\3\2\2\2JM\3\2\2\2KI\3\2\2\2KL\3\2\2\2LN\3\2\2\2MK\3"+
+		"\2\2\2NR\5\b\5\2OQ\7\13\2\2PO\3\2\2\2QT\3\2\2\2RP\3\2\2\2RS\3\2\2\2SU"+
+		"\3\2\2\2TR\3\2\2\2UV\7\b\2\2V\r\3\2\2\2W[\7\6\2\2XZ\7\13\2\2YX\3\2\2\2"+
+		"Z]\3\2\2\2[Y\3\2\2\2[\\\3\2\2\2\\^\3\2\2\2][\3\2\2\2^b\5\b\5\2_a\7\13"+
+		"\2\2`_\3\2\2\2ad\3\2\2\2b`\3\2\2\2bc\3\2\2\2ce\3\2\2\2db\3\2\2\2ef\7\b"+
+		"\2\2f\17\3\2\2\2gk\7\n\2\2hj\7\13\2\2ih\3\2\2\2jm\3\2\2\2ki\3\2\2\2kl"+
+		"\3\2\2\2ln\3\2\2\2mk\3\2\2\2nr\5\b\5\2oq\7\13\2\2po\3\2\2\2qt\3\2\2\2"+
+		"rp\3\2\2\2rs\3\2\2\2su\3\2\2\2tr\3\2\2\2uv\7\b\2\2v\21\3\2\2\2\17\30\37"+
+		"(/\66=CKR[bkr";
 	public static final ATN _ATN =
 		ATNSimulator.deserialize(_serializedATN.toCharArray());
 	static {
 		_decisionToDFA = new DFA[_ATN.getNumberOfDecisions()];
-		for (int i = 0; i < _ATN.getNumberOfDecisions(); i++) {
-			_decisionToDFA[i] = new DFA(_ATN.getDecisionState(i), i);
-		}
 	}
 }

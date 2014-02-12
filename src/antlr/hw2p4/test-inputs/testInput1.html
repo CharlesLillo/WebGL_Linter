@@ -1,0 +1,20 @@
+<html>
+    <head>
+        <script id="vertex-code" type="x-shader">
+       void main() {
+            gl_Position = vec4(vertexPoint, 0.0, 1.0);
+        }
+        </script>
+
+        <script id="fragment-code" type="x-shader">
+        void main() {
+            gl_FragColor = fragColor;
+        }
+        </script>
+
+        <script type="text/javascript">
+        function init() {
+        }
+        </script>
+    </head>
+</html>
