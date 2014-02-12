@@ -7,7 +7,7 @@ This will also enable us to focus on just parsing C and Javascript, which will
 already be a nontrivial task as it is.
 */
 
-grammar WebGL_Parser_Assignment2p4;
+grammar hw2p4;
 
 document    :   htmlElement ;
 
