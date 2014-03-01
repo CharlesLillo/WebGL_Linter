@@ -27,6 +27,39 @@ vertexCodeScript    :   '<script id="vertex-code" type="x-shader">' Whitespace* 
 fragmentCodeScript  :   '<script id="fragment-code" type="x-shader">' Whitespace* content Whitespace* '</script>' ;
 javascript  :   '<script type="text/javascript">' Whitespace* content Whitespace* '</script>' ;
 
+/*JS types*/
+var 		:	'var' Whitespace*;
+
+/*GLSL Types*/
+boolsym			:	'bool' Whitespace*;
+bytesym			:	'byte' Whitespace*;
+ubytesym		:	'ubyte' Whitespace*;
+intsym 			:	'int' Whitespace*;
+uintsym			:	'uint' Whitespace*;
+charsym 		:	'char' Whitespace*;
+shortsym 		:	'short' Whitespace*;
+ushortsym 		:	'ushort' Whitespace*;
+fixedsym		:	'fixed' Whitespace*;
+sizeisym 		:	'sizei' Whitespace*;
+enumsym 		:	'enum' Whitespace*;
+intptrsym 		:	'intptr' Whitespace*;
+sizeiptrsym 	:	'sizeiptr' Whitespace*;
+floatsym 		:	'float' Whitespace*;
+clampfsym  		:	'clampf' Whitespace*;
+bitfieldsym  	:	'bitfield' Whitespace*;
+
+/*GL types*/
+attribute 	:	'attribute' Whitespace*;
+uniform 	:	'uniform' Whitespace*;
+varying 	:	'varying' Whitespace*;
+vec4 		:	'vec4' Whitespace*;
+vec3 		:	'vec3' Whitespace*;
+vec2 		:	'vec2' Whitespace*;
+mat4 		:	'mat4' Whitespace*;
+mat3 		:	'mat3' Whitespace*;
+mat2 		:	'mat2' Whitespace*;
+sampler2D 	:	'sampler2D' Whitespace*;
+
 Whitespace  :   [ \t\r\n]+;
 
 TEXT        :   ~['</']+ ;  //I don't know why this works but it does. Then again, it probably doesn't work.
