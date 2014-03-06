@@ -150,6 +150,45 @@ func41sym 	:	'linkProgram';
 func42sym 	:	'createProgram';
 func43sym 	:	'experimental-'?'webgl';
 
+/*GLSL Functions*/
+glfunc1sym  :   'normalize';
+glfunc2sym  :   'dot';
+glfunc3sym  :   'reflect';
+glfunc4sym  :   'max';
+glfunc5sym  :   'texture2D';
+
+/*GLSL Dedicated Variables*/
+glPOSsym	: 'gl_Position' Whitespace*;
+glFRAGsym	: 'gl_FragColor' Whitespace*;
+
+/*Other words*/
+ifsym  		:   'if';
+whilesym  	:   'while';
+dosym  		:   'do';
+thensym  	:   'then';
+constsym  	:   'const';
+elsesym		:	'else';
+nullsym		:	'null';
+truesym		:	'true';
+falsesym	:	'false';
+
+/*Arithmetic and Logic Symbols*/
+leqsym  		:   '<=';
+geqsym  		:   '>=';
+neqsym  		:   '<>';
+gtrsym  		:   '>';
+lessym  		:   '<';
+plussym			:	'+';
+eqsym			:	'=';
+minussym		:	'-';
+multsym			:	'*';/*may need adjustment or watch for pointers*/
+slashsym  		:   '/';
+lparentsym  	:   '(';
+rparentsym  	:   ')';
+commasym  		:   ',';
+semicolonsym  	:   ';';
+periodsym		:	'.';
+quotsym			:	'"';
 
 Whitespace  :   [ \t\r\n]+;
 
