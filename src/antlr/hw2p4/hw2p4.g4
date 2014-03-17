@@ -30,6 +30,9 @@ javascript  :   '<script type="text/javascript">' Whitespace* content Whitespace
 /*JS types*/
 var 		:	'var' Whitespace*;
 
+/*GL CONTEXT VARIABLE (HARDCODED FOR PARSING)*/
+glcontextsym 	: 	'gl' | 'GL';
+
 /*GLSL Types*/
 boolsym			:	'bool' Whitespace*;
 bytesym			:	'byte' Whitespace*;
@@ -191,92 +194,52 @@ periodsym		:	'.';
 quotsym			:	'"';
 
 //FUNCTION DEFINITONS (I am replacing DONTCARESYM with the TEXT rule so it compiles for the time being)
-getContext: func1sym lparentsym quotsym func43sym quotsym rparentsym semicolonsym;
+R_getContext: glcontextsym periodsym func1sym lparentsym quotsym glcontextsym periodsym func43sym quotsym rparentsym semicolonsym;
+R_getExtension: glcontextsym periodsym func2sym lparentsym quotsym TEXT quotsym rparentsym semicolonsym;
+R_clear: glcontextsym periodsym func3sym lparentsym glcontextsym periodsym (const1sym | const2sym | const3sym) rparentsym semicolonsym;
+R_createFrameBuffer: glcontextsym periodsym func4sym lparentsym rparentsym semicolonsym;
+R_bindFrameBuffer: glcontextsym periodsym func5sym lparentsym glcontextsym periodsym const19sym commasym glcontextsym periodsym const4sym rparentsym semicolonsym;
+R_createTexture: glcontextsym periodsym func6sym lparentsym rparentsym semicolonsym;
+R_bindTexture: glcontextsym periodsym func7sym lparentsym glcontextsym periodsym const6sym commasym TEXT rparentsym semicolonsym;
+R_texParameteri: glcontextsym periodsym func8sym lparentsym glcontextsym periodsym const6sym rparentsym semicolonsym;
+R_texImage2D: glcontextsym periodsym func9sym lparentsym glcontextsym periodsym const6sym commasym instym commasym glcontextsym periodsym const9sym commasym instym commasym instym commasym instym commasym glcontextsym periodsym const9sym commasym glcontextsym periodsym const10sym commasym nullsym rparentsym semicolonsym;
+R_createRenderbuffer: glcontextsym periodsym func10sym lparentsym rparentsym semicolonsym;
+R_bindRenderbuffer: glcontextsym periodsym func11sym lparentsym glcontextsym periodsym const5sym commasym TEXT rparentsym semicolonsym;
+R_renderbufferStorage: glcontextsym periodsym func12sym lparentsym glcontextsym periodsym const5sym commasym glcontextsym periodsym const13sym commasym instym commasym instym rparentsym semicolonsym;
+R_framebufferTexture2D: glcontextsym periodsym func13sym lparentsym glcontextsym periodsym const4sym commasym glcontextsym periodsym const12sym commasym glcontextsym periodsym const6sym commasym TEXT commasym intsym rparentsym semicolonsym;
+R_framebufferRenderbuffer: glcontextsym periodsym func14sym lparentsym glcontextsym periodsym const4sym commasym (const11sym | const12sym) commasym glcontextsym periodsym const5sym commasym TEXT rparentsym semicolonsym;
+R_readPixels: glcontextsym periodsym func15sym lparentsym intsym commasym intsym commasym intsym commasym intsym commasym glcontextsym periodsym const10sym commasym const10sym rparentsym semicolonsym;
+R_clearColor: glcontextsym periodsym func16sym lparentsym floatsym commasym floatsym commasym floatsym commasym floatsym rparentsym semicolonsym;
+R_enable: glcontextsym periodsym func17sym lparentsym glcontextsym periodsym const16sym rparentsym semicolonsym;
+R_createBuffer: glcontextsym periodsym func18sym lparentsym rparentsym semicolonsym;
+R_bufferData: glcontextsym periodsym func19sym lparentsym glcontextsym periodsym const19sym commasym TEXT commasym glcontextsym periodsym const20sym rparentsym semicolonsym;
+R_bindBuffer: glcontextsym periodsym func20sym lparentsym glcontextsym periodsym const19sym commasym TEXT rparentsym semicolonsym;
+R_uniform4fv: glcontextsym periodsym func21sym lparentsym uintsym commasym TEXT rparentsym semicolonsym;
+R_enableVertexAttribArray: glcontextsym periodsym func22sym lparentsym uintsym rparentsym semicolonsym;
+R_vertexAttribPointer: glcontextsym periodsym func23sym lparentsym uintsym commasym intsym commasym glcontextsym periodsym const21sym commasym boolsym commasym intsym commasym intsym rparentsym semicolonsym;
+R_disableVertexAttribArray: glcontextsym periodsym func24sym lparentsym uintsym rparentsym semicolonsym;
+R_vertexAttrib3f: glcontextsym periodsym func25sym lparentsym uintsym commasym NUM commasym NUM commasym NUM rparentsym semicolonsym;
 
-getExtension: func2sym lparentsym quotsym TEXT quotsym rparentsym semicolonsym;
-
-clear: func3sym lparentsym (const1sym || const2sym || const3sym || *) rparentsym semicolonsym;
-
-createFrameBuffer: func4sym lparentsym rparentsym semicolonsym;
-
-bindFrameBuffer: func5sym lparentsym const19sym commasym const4sym rparentsym semicolonsym;
-
-createTexture: func6sym lparentsym rparentsym semicolonsym;
-
-bindTexture: func7sym lparentsym const6sym commasym TEXT rparentsym semicolonsym;
-
-texParameteri: func8sym lparentsym (const6sym || *) rparentsym semicolonsym;
-
-texImage2D: func9sym lparentsym (const6sym || *) commasym instym commasym (const9sym || *) commasym instym commasym instym commasym instym commasym (const9sym || *) commasym (const10sym || *) commasym (nullsym || *) rparentsym semicolonsym;
-
-createRenderbuffer: func10sym lparentsym rparentsym semicolonsym;
-
-bindRenderbuffer: func11sym lparentsym const5sym commasym TEXT rparentsym semicolonsym;
-
-renderbufferStorage: func12sym lparentsym const5sym commasym (const13sym || *) commasym instym commasym instym rparentsym semicolonsym;
-
-framebufferTexture2D: func13sym lparentsym (const4sym || *) commasym (const12sym || *) commasym (const6sym || *) commasym TEXT commasym intsym rparentsym semicolonsym;
-
-framebufferRenderbuffer: func14sym lparentsym const4sym commasym (const11sym || const12sym || *) commasym const5sym commasym TEXT rparentsym semicolonsym;
-
-readPixels: func15sym lparentsym intsym commasym intsym commasym intsym commasym intsym commasym const10sym commasym varsym rparentsym semicolonsym;
-
-clearColor: func16sym lparentsym floatsym commasym floatsym commasym floatsym commasym floatsym rparentsym semicolonsym;
-
-enable: func17sym lparentsym (const16sym || *) rparentsym semicolonsym;
-
-createBuffer: func18sym lparentsym rparentsym semicolonsym;
-
-bufferData: func19sym lparentsym (const19sym || *) commasym [(intsym) || (varsym)] commasym (const20sym || *) rparentsym semicolonsym;
-
-bindBuffer: func20sym lparentsym rparentsym semicolonsym;
-
-uniform4fv: func21sym lparentsym uintsym commasym varsym rparentsym semicolonsym;
-
-enableVertexAttribArray: func22sym lparentsym uintsym rparentsym semicolonsym;
-
-vertexAttribPointer: func23sym lparentsym uintsym commasym intsym commasym  (const21sym || *) commasym boolsym commasym intsym commasym intsym rparentsym semicolonsym;
-
-disableVertexAttribArray: func24sym lparentsym uintsym rparentsym semicolonsym;
-
-vertexAttrib3f: func25sym lparentsym uintsym commasym [(floatsym commasym floatsym commasym floatsym) || (intsym commasym intsym commasym intsym) || (varsym) || (*)] commasym rparentsym semicolonsym;
-
-activeTexure: func26sym lparentsym (const22sym || const23sym || const24sym) rparentsym semicolonsym;
-
-uniform1i: func27sym lparentsym uintsym commasym (intsym || varsym) rparentsym semicolonsym;
-
-drawArrays: func28sym lparentsym ( const25sym || const31sym || const32sym || const33sym || const34sym || const35sym || const36sym) commasym intsym commasym intsym rparentsym semicolonsym;
-
-useProgram: func29sym lparentsym TEXT rparentsym semicolonsym;
-
-getAttribLocation: func30sym lparentsym TEXT commasym TEXT rparentsym semicolonsym;
-
-getUniformLocation: func31sym lparentsym TEXT commasym TEXT rparentsym semicolonsym;
-
-pixelStorei: func32sym lparentsym (const29sym || *) commasym intsym rparentsym semicolonsym;
-
-generateMipmap: func33sym lparentsym (const6sym || *) rparentsym semicolonsym;
-
-uniformMatrix4fv: func34sym lparentsym uintsym commasym falsesym commasym varsym rparentsym semicolonsym;
-
-uniform3fv: func35sym lparentsym uintsym commasym falsesym commasym varsym rparentsym semicolonsym;
-
-uniform1f: func36sym lparentsym uintsym commasym (floatsym || varsym) rparentsym semicolonsym;
-
-viewport: func37sym lparentsym intsym commasym intsym commasym intsym commasym instym rparentsym semicolonsym;
-
-shaderSource: func38sym lparentsym TEXT commasym TEXT rparentsym semicolonsym;
-
-compileShader: func39sym lparentsym TEXT rparentsym semicolonsym;
-
-attachShader: func40sym lparentsym TEXT commasym TEXT rparentsym semicolonsym;
-
-linkProgram: func41sym lparentsym TEXT rparentsym semicolonsym;
-
-createProgram: func42sym lparentsym rparentsym semicolonsym;
+R_activeTexure: func26sym lparentsym (const22sym || const23sym || const24sym) rparentsym semicolonsym;
+R_uniform1i: func27sym lparentsym uintsym commasym (intsym || varsym) rparentsym semicolonsym;
+R_drawArrays: func28sym lparentsym ( const25sym || const31sym || const32sym || const33sym || const34sym || const35sym || const36sym) commasym intsym commasym intsym rparentsym semicolonsym;
+R_useProgram: func29sym lparentsym TEXT rparentsym semicolonsym;
+R_getAttribLocation: func30sym lparentsym TEXT commasym TEXT rparentsym semicolonsym;
+R_getUniformLocation: func31sym lparentsym TEXT commasym TEXT rparentsym semicolonsym;
+R_pixelStorei: func32sym lparentsym (const29sym || *) commasym intsym rparentsym semicolonsym;
+R_generateMipmap: func33sym lparentsym (const6sym || *) rparentsym semicolonsym;
+R_uniformMatrix4fv: func34sym lparentsym uintsym commasym falsesym commasym varsym rparentsym semicolonsym;
+R_uniform3fv: func35sym lparentsym uintsym commasym falsesym commasym varsym rparentsym semicolonsym;
+R_uniform1f: func36sym lparentsym uintsym commasym (floatsym || varsym) rparentsym semicolonsym;
+R_viewport: func37sym lparentsym intsym commasym intsym commasym intsym commasym instym rparentsym semicolonsym;
+R_shaderSource: func38sym lparentsym TEXT commasym TEXT rparentsym semicolonsym;
+R_compileShader: func39sym lparentsym TEXT rparentsym semicolonsym;
+R_attachShader: func40sym lparentsym TEXT commasym TEXT rparentsym semicolonsym;
+R_linkProgram: func41sym lparentsym TEXT rparentsym semicolonsym;
+R_createProgram: func42sym lparentsym rparentsym semicolonsym;
 
 
 Whitespace  :   [ \t\r\n]+;
-
+NUM 		:	('0'..'9')+;
 TEXT        :   ~['</']+ ;  //I don't know why this works but it does. Then again, it probably doesn't work.
 SEA_WS      :   (' '|'\t'|'\r'? '\n')+ ; 
