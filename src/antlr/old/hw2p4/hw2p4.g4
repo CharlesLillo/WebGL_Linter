@@ -193,7 +193,7 @@ semicolonsym  	:   ';';
 periodsym		:	'.';
 quotsym			:	'"';
 
-//FUNCTION DEFINITONS (I am replacing DONTCARESYM with the TEXT rule so it compiles for the time being)
+/*FUNCTION DEFINITONS (I am replacing DONTCARESYM with the TEXT rule so it compiles for the time being)*/
 R_getContext: glcontextsym periodsym func1sym lparentsym quotsym glcontextsym periodsym func43sym quotsym rparentsym semicolonsym;
 R_getExtension: glcontextsym periodsym func2sym lparentsym quotsym TEXT quotsym rparentsym semicolonsym;
 R_clear: glcontextsym periodsym func3sym lparentsym glcontextsym periodsym (const1sym | const2sym | const3sym) rparentsym semicolonsym;
@@ -220,7 +220,7 @@ R_vertexAttribPointer: glcontextsym periodsym func23sym lparentsym uintsym comma
 R_disableVertexAttribArray: glcontextsym periodsym func24sym lparentsym uintsym rparentsym semicolonsym;
 R_vertexAttrib3f: glcontextsym periodsym func25sym lparentsym uintsym commasym NUM commasym NUM commasym NUM rparentsym semicolonsym;
 
-R_activeTexure: func26sym lparentsym (const22sym || const23sym || const24sym) rparentsym semicolonsym;
+/*R_activeTexure: func26sym lparentsym (const22sym || const23sym || const24sym) rparentsym semicolonsym;
 R_uniform1i: func27sym lparentsym uintsym commasym (intsym || varsym) rparentsym semicolonsym;
 R_drawArrays: func28sym lparentsym ( const25sym || const31sym || const32sym || const33sym || const34sym || const35sym || const36sym) commasym intsym commasym intsym rparentsym semicolonsym;
 R_useProgram: func29sym lparentsym TEXT rparentsym semicolonsym;
@@ -236,7 +236,7 @@ R_shaderSource: func38sym lparentsym TEXT commasym TEXT rparentsym semicolonsym;
 R_compileShader: func39sym lparentsym TEXT rparentsym semicolonsym;
 R_attachShader: func40sym lparentsym TEXT commasym TEXT rparentsym semicolonsym;
 R_linkProgram: func41sym lparentsym TEXT rparentsym semicolonsym;
-R_createProgram: func42sym lparentsym rparentsym semicolonsym;
+R_createProgram: func42sym lparentsym rparentsym semicolonsym;*/
 
 
 Whitespace  :   [ \t\r\n]+;
