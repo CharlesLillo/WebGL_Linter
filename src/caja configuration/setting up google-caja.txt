@@ -1,0 +1,29 @@
+SETTING UP GOOGLE-CAJA TO USE
+
+	Basically, follow the instructions at: https://code.google.com/p/google-caja/wiki/RunningCaja
+
+	Two caveats not mentioned there:
+		1. You MUST run Caja under *nix, not Windows
+		2. You need JDK 7, not JDK 6. If you get an error about major minor version 51.0, update alternatives to JDK 7
+		3. You need to add XOM to your classpath. The JAR file can be found here: http://www.cafeconleche.org/XOM/xom-1.2.10.jar
+
+	Once you've verified that Caja will compile with Ant, you'll want to work with it from within and IDE like Intellij or Eclipse so you don't go batshit. 
+
+	To get a project to work with Google-Caja's code, such as caja-parser-demo, do the following:
+		1. Import google-caja into your project (Intellij) or workspace (Eclipse)
+		2. Add google-caja's build.xml file to your ant build scripts in your IDE, and verify that google-caja will compile
+		3. If it doesn't automatically find it in your classpath, add the XOM jar file to google-caja's dependencies
+		4. Add google-caja to caja-parser-demo's dependencies (or whatever project (eclipse)/module (intellij) you are working on)
+
+USING THE PARSER
+
+	Getting the top-level node of an AST for a JavaScript program, a Block in our case (com.google.caja.parser.js.Block), basically entails the following steps:
+
+		1. Create a JsLexer
+		2. Create a JsTokenQueue
+		3. Create a Parser
+		4. Run Parser.parse(), which will return the top-level node of the program
+
+	I derived these steps from com.google.caja.util.CajaTestCase.js()
+
+If you look at com.google.caja.parser.js, you'll see all of the different classes that represent different types of nodes. You can inspect them for information on their usage. Google's code is good at being self-documenting.
