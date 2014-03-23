@@ -1,0 +1,155 @@
+  // Terminal productions
+  Program                 => <DirectivePrologue>? <TerminatedStatement>*
+  Statement               => <TerminalStatement>
+                           | <NonTerminalStatement>
+  Expression              => <CommaOperator>
+ 
+  // Non-terminal productions.  Indentation indicates that a nonterminal is
+  // used only by the unindented nonterminal above it.
+  DirectivePrologue       => <Directive> <DirectivePrologue>?
+  Directive               => <StringLiteral> ';'
+  TerminatedStatement     => <BlockStatement>
+                           | <SimpleStatement> <StatementTerminator>
+    StatementTerminator   => ';'
+                           | <InsertedSemicolon>
+    BlockStatement        => <StatementLabel>? <BlockStatementAtom>
+    SimpleStatement       => <StatementLabel>? <SimpleStatementAtom>
+    InsertedSemicolon     => &epsilon;  // abort if disallowed in context
+    StatementLabel        => <Identifier> ':'
+    BlockStatementAtom    => <Block>
+                           | <Conditional>
+                           | <For>
+                           // Noop is a block statement atom since it's
+                           // guaranteed to end with a semicolon.  If it were
+                           // a simple statement epsilon, then it could be
+                           // inserted anywhere that semicolon insertion is
+                           // allowed.
+                           | <Noop>
+                           | <Switch>
+                           | <Try>
+                           | <While>
+                           | <With>
+    SimpleStatementAtom   => <Break>
+                           | <Continue>
+                           | <Debugger>
+                           // Do-While loops are simple because, unlike other
+                           // loops their body isn't last, so they aren't
+                           // guaranteed to end with a right-curly or semi.
+                           | <Do>
+                           | <ExprStatement>
+                           | <FunctionDeclaration>
+                           | <Declaration>
+                           | <Throw>
+                           | <Return>
+ 
+  Identifier              != <Keyword>
+                           | <Word>
+  Body                    => <TerminatedStatement>
+ 
+  Block                   => '{' <TerminatedStatement>* '}'
+  Conditional             => 'if' '(' <Expression> ')' <Body> <Else>
+    Else                  => 'else' <Body>
+                           | &epsilon;
+  For                     => 'for' '(' ';' <ExpressionOrNoop> <Expression>? ')'
+                             <Body>
+                           | 'for' '(' <DeclarationStart> 'in' <Expression> ')'
+                             <Body>
+                           | 'for' '(' <LValue> 'in' <Expression> ')'
+                             <Body>
+                           | 'for' '(' <Declaration> ';' <ExpressionOrNoop>
+                             <Expression>? ')' <Body>
+                           | 'for' '(' <Expression> ';' <ExpressionOrNoop>
+                             <Expression>? ')' <Body>
+  Noop                    => ';'
+  Switch                  => 'switch' '(' <Expression> ')' '{' <Cases> '}'
+    Cases                 => <Case>* <DefaultAndCases>?
+      DefaultAndCases     => <Default> <Case>*
+    Case                  => 'case' <Expression> ':' <TerminatedStatement>*
+    Default               => 'default' ':' <TerminatedStatement>*
+  Try                     => 'try' <Body> <TryClauses>
+    TryClauses            => <Catch> <Finally>?
+                           | <Finally>
+    Catch                 => 'catch' '(' <Identifier> ')' <Body>
+    Finally               => 'finally' <Body>
+  While                   => 'while' '(' <Expression> ')' <Body>
+  With                    => 'with' '(' <Expression> ')' <Body>
+  Do                      => 'do' <Body> 'while' '(' <Expression> ')'
+  Break                   => 'break' [no LineTerminator] <StatementLabel>?
+  Continue                => 'continue' [no LineTerminator] <StatementLabel>?
+  Debugger                => 'debugger'
+  Return                  => 'return' [no LineTerminator] <Expression>?
+  Throw                   => 'throw' [no LineTerminator] <Expression>
+  ExprStatement           => <Expression>
+ 
+  ExpressionOrNoop        => <Expression>?
+  DeclarationStart        => <DeclarationKeyword> <Identifier>
+  Declaration             => <DeclarationKeyword> <DeclarationBodyList>
+    DeclarationKeyword    => 'var' | 'const'
+    DeclarationBodyList   => <DeclarationBody> <DeclarationBodyTail>
+    DeclarationBodyTail   => ',' <DeclarationBodyList>
+                           | &epsilon;
+    DeclarationBody       => <Identifier> <InitialValue>?
+    InitialValue          => '=' <Expression>
+ 
+  FunctionDeclaration     => <NamedFunction>
+  FunctionConstructor     => <NamedFunction>
+                           | <AnonymousFunction>
+    AnonymousFunction     => 'function' <Formals> <FunctionBody>
+  NamedFunction           => 'function' <Identifier> <Formals> <FunctionBody>
+  FunctionBody            => '{' <Program> '}'
+  Formals                 => '(' <IdentifierList>? ')'
+    IdentifierList        => <Identifier> <IdentifierListTail>
+    IdentifierListTail    => ',' <IdentifierList>
+ 
+  // All of the operators have an associated precedence defined in the Operator
+  // enum.  The p variable on the right of the productions is the precedence
+  // of the most recently consumed operator.
+  CommaOperator           => <Operator(MAX)>
+                           | <CommaOperator> ',' <Operator(MAX)>
+  Operator(prec)          => <OperatorHead(prec)> <OperatorTail(prec)>
+    OperatorHead(prec)    => <PrefixOperator(p < prec)> <Operator(p + 1)>
+                           | <ExpressionAtom>
+    OperatorTail(prec)    => [no LineTerminator] <PostfixOperator(p < prec)>
+                           | <RightAssocInfixOperator(p <= prec)> <Operator(p)>
+                           | <LeftAssocInfixOperator(p < prec)> <Operator(p)>
+                          // below only match if p < prec
+                           | '[' <Expression> ']'
+                           | '(' <ActualList>? ')'
+                           | '?' <Operator(TERNARY)> ':' <Operator(TERNARY)>
+                           | <ExpressionAtom>
+      // ActualList uses Operator(MAX) to prevent parsing actuals from being
+      // treated as operands to the comma operator.  Since the parentheses
+      // recurse to Expression under ExpressionAtom, the result of a comma
+      // operator can be passed to a function by nesting in parens.
+      ActualList          => <Operator(MAX)> <ActualListTail>?
+      ActualListTail      => ',' <ActualList>
+                           | &epsilon;
+    ExpressionAtom        => <StringLiteral>
+                           | <NumberLiteral>
+                           | <RegexpLiteral>
+                           | 'null' | 'true' | 'false' | 'this'
+                           | <FunctionConstructor>
+                           | <Keyword>  // error and treat as identifier
+                           | <Identifier>
+                           | '(' <Expression> ')'
+                           | <ArrayConstructor>
+                           | <ObjectConstructor>
+                           | &epsilon;  // in error-tolerant mode
+    ArrayConstructor      => '[' <ArrayElements> <TrailingComma>? ']'
+      ArrayElements       => <ArrayElementsHead>* <Expression>
+                           | &epsilon;
+      ArrayElementsHead   => <Expression>? ','
+    ObjectConstructor     => '{' <ObjPropertyList> '}'
+      ObjPropertyList     => <ObjPropery> <ObjProperties>* <TrailingComma>?
+      ObjProperties       => ',' <ObjectPreperty>
+      ObjProperty         => <ValueProperty>
+                           | <GetterProperty>
+                           | <SetterProperty>
+        ValueProperty     => <PropName> ':' <Expression>
+        GetterProperty    => 'get' <PropName> <Formals> <FunctionBody>
+        SetterProperty    => 'set' <PropName> <Formals> <FunctionBody>
+          ObjPropertyKey  => <Identifier>
+                           | <StringLiteral>
+                           | <NumberLiteral>
+                           | <Keyword>  // set allowed interpreter dependent
+    TrailingComma         => ','  // warn

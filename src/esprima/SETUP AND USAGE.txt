@@ -1,0 +1,18 @@
+Very easy setup to run this:
+
+If you don't already have git bash and node installed, go get them. Once they are setup, run -
+
+npm install esprima
+npm install estraverse
+
+Now you will be able to run the files.
+
+USAGE OF ANALYZER -
+
+node [analysis file name] [file to be analyzed];
+
+eg. node analysis.js test.js
+
+Console output will provide analysis results.
+
+gogogogogogogogo!@@@@!
