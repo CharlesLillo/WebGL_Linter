@@ -1,5 +1,9 @@
-g = 1;
-f = 2;
-var h = 1, i;
-var gl = null;
-gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+function main(){
+        var canvas = null;
+        var gl = null;
+        var messageField = null;
+
+        //Get context
+        canvas = document.getElementById("myCanvas1");
+        gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+}

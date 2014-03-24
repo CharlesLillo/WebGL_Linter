@@ -1,0 +1,162 @@
+{
+    "type": "Program",
+    "body": [
+        {
+            "type": "FunctionDeclaration",
+            "id": {
+                "type": "Identifier",
+                "name": "main"
+            },
+            "params": [],
+            "defaults": [],
+            "body": {
+                "type": "BlockStatement",
+                "body": [
+                    {
+                        "type": "VariableDeclaration",
+                        "declarations": [
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "canvas"
+                                },
+                                "init": {
+                                    "type": "Literal",
+                                    "value": null
+                                }
+                            }
+                        ],
+                        "kind": "var"
+                    },
+                    {
+                        "type": "VariableDeclaration",
+                        "declarations": [
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "gl"
+                                },
+                                "init": {
+                                    "type": "Literal",
+                                    "value": null
+                                }
+                            }
+                        ],
+                        "kind": "var"
+                    },
+                    {
+                        "type": "VariableDeclaration",
+                        "declarations": [
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "messageField"
+                                },
+                                "init": {
+                                    "type": "Literal",
+                                    "value": null
+                                }
+                            }
+                        ],
+                        "kind": "var"
+                    },
+                    {
+                        "type": "ExpressionStatement",
+                        "expression": {
+                            "type": "AssignmentExpression",
+                            "operator": "=",
+                            "left": {
+                                "type": "Identifier",
+                                "name": "canvas"
+                            },
+                            "right": {
+                                "type": "CallExpression",
+                                "callee": {
+                                    "type": "MemberExpression",
+                                    "computed": false,
+                                    "object": {
+                                        "type": "Identifier",
+                                        "name": "document"
+                                    },
+                                    "property": {
+                                        "type": "Identifier",
+                                        "name": "getElementById"
+                                    }
+                                },
+                                "arguments": [
+                                    {
+                                        "type": "Literal",
+                                        "value": "myCanvas1"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "type": "ExpressionStatement",
+                        "expression": {
+                            "type": "AssignmentExpression",
+                            "operator": "=",
+                            "left": {
+                                "type": "Identifier",
+                                "name": "gl"
+                            },
+                            "right": {
+                                "type": "LogicalExpression",
+                                "operator": "||",
+                                "left": {
+                                    "type": "CallExpression",
+                                    "callee": {
+                                        "type": "MemberExpression",
+                                        "computed": false,
+                                        "object": {
+                                            "type": "Identifier",
+                                            "name": "canvas"
+                                        },
+                                        "property": {
+                                            "type": "Identifier",
+                                            "name": "getContext"
+                                        }
+                                    },
+                                    "arguments": [
+                                        {
+                                            "type": "Literal",
+                                            "value": "webgl"
+                                        }
+                                    ]
+                                },
+                                "right": {
+                                    "type": "CallExpression",
+                                    "callee": {
+                                        "type": "MemberExpression",
+                                        "computed": false,
+                                        "object": {
+                                            "type": "Identifier",
+                                            "name": "canvas"
+                                        },
+                                        "property": {
+                                            "type": "Identifier",
+                                            "name": "getContext"
+                                        }
+                                    },
+                                    "arguments": [
+                                        {
+                                            "type": "Literal",
+                                            "value": "experimental-webgl"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "rest": null,
+            "generator": false,
+            "expression": false
+        }
+    ]
+}
