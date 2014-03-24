@@ -1,7 +1,7 @@
 WebGL_Linter
 ============
 
-A static analysis tool for WebGL projects.
+A static analysis tool for WebGL projects. This tool is a node based module leveraging Esprima and estraverse to provide the user with helpful linting pre-compiling time about their WebGL projects.
 
 LINKS:  
 
@@ -15,9 +15,7 @@ LINKS:
 
 	GLSL OpenGL ES 2.0 Specification: http://www.khronos.org/opengles/sdk/docs/manglsl/  
 
-	JastAdd: http://jastadd.org/web/  
-
-	Apache Ant: https://ant.apache.org/  
+	Esprima: http://esprima.org/index.html
 
 
 Helpful sites:  
@@ -30,22 +28,4 @@ Helpful sites:
 
 	https://developer.mozilla.org/en-US/docs/Web/WebGL  
 
-
-First Objectives (As of Feb 6):  
-
-	Tokenizer written in FLEX:  
-
-		FOCUS: WebGL constants, and primary functions.  
-
-			Constants:  
-
-				-To be updated  
-
-			Functions:  
-
-				-To be updated  
-
-	Parser written in Antlr:  
-
-		FOCUS: Ability to parse our Flex file.  
 
