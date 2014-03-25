@@ -29,22 +29,18 @@ estraverse.traverse(ast, {
 });
 
 //Estraverse enter function
-
 function enter(node) {
-    //Checks currnent nodes type
+    //Checks current nodes type
     if (node.type === 'CallExpression') {
         //Pulls the argument node from the current node
         var args = node['arguments'];
         //Pushes the functions names to our function list
-        functions.push(getFunctionName(node));
-        //Pushes all the argument names in the argument array to the list
-        for (var i = 0; i < args.length; i++) {
-            functions.push(args[i].value);
-        }
+        var functionName = getFunctionName(node);
+        analyzeArgs(functionName, args);
     }
 }
-//Function that gets the function name depending on how it was called
 
+//Function that gets the function name depending on how it was called
 function getFunctionName(node) {
     if (node.callee.type === 'Identifier') {
         return node.callee.name;
@@ -53,14 +49,16 @@ function getFunctionName(node) {
         return node.callee.property.name;
     }
 }
-//Analysis
-for (var i = 0; i < functions.length; i++) {
-    if (functions[i] == "getContext") {
-        if (functions[i + 1] != "webgl" && functions[i + 1] != "experimental-webgl") error(0);
+
+//END GL CONTEXT TEST
+
+function analyzeArgs(functionName, args){
+ //Get Context
+ if (functionName == "getContext") {
+        if (args[0].value != "webgl" && args[0].value != "experimental-webgl") 
+        	error(0);
     }
 }
-console.log("Functions are: " + functions);
-//END GL CONTEXT TEST
 
 //Error output function. Will change to an array of errors that are printed at the end of traversing the ast.
 function error(err) {

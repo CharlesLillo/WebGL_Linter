@@ -124,7 +124,7 @@
                                     "arguments": [
                                         {
                                             "type": "Literal",
-                                            "value": "webgl"
+                                            "value": "wedbgl"
                                         }
                                     ]
                                 },
@@ -145,7 +145,7 @@
                                     "arguments": [
                                         {
                                             "type": "Literal",
-                                            "value": "experimental-webgl"
+                                            "value": "experimenta3l-webgl"
                                         }
                                     ]
                                 }
