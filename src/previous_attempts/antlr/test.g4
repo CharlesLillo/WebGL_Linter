@@ -20,7 +20,7 @@ headElement :   '<head>' Whitespace* vertexCodeScript Whitespace* fragmentCodeSc
 
 content     :   chardata? ;
 
-chardata    :   Var | Glcontextsym | TEXT | SEA_WS; 
+chardata    :   Var | Glcontextsym | TEXT | SEA_WS;
 
 vertexCodeScript    :   '<script id="vertex-code" type="x-shader">' Whitespace* content Whitespace* '</script>' ;
 fragmentCodeScript  :   '<script id="fragment-code" type="x-shader">' Whitespace* content Whitespace* '</script>' ;
@@ -214,12 +214,12 @@ Quotsym			:	'"';
 // vertexAttribPointer: glcontextsym periodsym func23sym lparentsym uintsym commasym intsym commasym glcontextsym periodsym const21sym commasym boolsym commasym intsym commasym intsym rparentsym semicolonsym;
 // disableVertexAttribArray: glcontextsym periodsym func24sym lparentsym uintsym rparentsym semicolonsym;
 // vertexAttrib3f: glcontextsym periodsym func25sym lparentsym uintsym commasym NUM commasym NUM commasym NUM rparentsym semicolonsym;
-
 /*activeTexure: func26sym lparentsym (const22sym || const23sym || const24sym) rparentsym semicolonsym;
 uniform1i: func27sym lparentsym uintsym commasym (intsym || varsym) rparentsym semicolonsym;
 drawArrays: func28sym lparentsym ( const25sym || const31sym || const32sym || const33sym || const34sym || const35sym || const36sym) commasym intsym commasym intsym rparentsym semicolonsym;
 useProgram: func29sym lparentsym TEXT rparentsym semicolonsym;
 getAttribLocation: func30sym lparentsym TEXT commasym TEXT rparentsym semicolonsym;
+---TOBY HERE!!!!!!!
 getUniformLocation: func31sym lparentsym TEXT commasym TEXT rparentsym semicolonsym;
 pixelStorei: func32sym lparentsym (const29sym || *) commasym intsym rparentsym semicolonsym;
 generateMipmap: func33sym lparentsym (const6sym || *) rparentsym semicolonsym;
@@ -237,4 +237,4 @@ createProgram: func42sym lparentsym rparentsym semicolonsym;*/
 Whitespace  :   [ \t\r\n]+;
 NUM 		:	('0'..'9')+;
 TEXT        :   ~['</']+ ;  //I don't know why this works but it does. Then again, it probably doesn't work.
-SEA_WS      :   (' '|'\t'|'\r'? '\n')+ ; 
+SEA_WS      :   (' '|'\t'|'\r'? '\n')+ ;
