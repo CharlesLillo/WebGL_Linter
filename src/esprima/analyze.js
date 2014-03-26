@@ -28,6 +28,7 @@ var byteTypes = ["UNSIGNED_BYTE", "UNSIGNED_SHORT_5_6_5", "UNSIGNED_SHORT_4_4_4_
 var texTargets = ["TEXTURE_2D", "TEXTURE_CUBE_MAP_POSITIVE_X", "TEXTURE_CUBE_MAP_POSITIVE_Y", "TEXTURE_CUBE_MAP_POSITIVE_Z", "TEXTURE_CUBE_MAP_NEGATIVE_X",
     "TEXTURE_CUBE_MAP_NEGATIVE_Y", "TEXTURE_CUBE_MAP_NEGATIVE_Z"
 ];
+var bufferBits = ["COLOR_BUFFER_BIT", "DEPTH_BUFFER_BIT", "STENCIL_BUFFER_BIT"];
 
 //Begin Tests
 estraverse.traverse(ast, {
@@ -73,8 +74,14 @@ function analyzeArgs(functionName, args) {
     }
     //clear(needs binary experssion masking check)
     if (functionName == "clear") {
-        if (args[0].property.name != "COLOR_BUFFER_BIT" && args[0].property.name != "DEPTH_BUFFER_BIT" && args[0].property.name != "STENCIL_BUFFER_BIT")
-            error(2);
+        if (args[0].type != "BinaryExpression") {
+            if (bufferBits.indexOf(args[0].property.name)==-1)
+                error(2);
+        }
+        else{
+            if (bufferBits.indexOf(args[0].left.property.name)==-1 || bufferBits.indexOf(args[0].right.property.name)==-1  )
+                error(2); 
+        }
     }
     //createFrameBuffer
     if (functionName == "createFramebuffer") {
