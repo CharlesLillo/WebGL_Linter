@@ -13,143 +13,39 @@
                 "type": "BlockStatement",
                 "body": [
                     {
-                        "type": "VariableDeclaration",
-                        "declarations": [
-                            {
-                                "type": "VariableDeclarator",
-                                "id": {
-                                    "type": "Identifier",
-                                    "name": "canvas"
-                                },
-                                "init": {
-                                    "type": "Literal",
-                                    "value": null
-                                }
-                            }
-                        ],
-                        "kind": "var"
-                    },
-                    {
-                        "type": "VariableDeclaration",
-                        "declarations": [
-                            {
-                                "type": "VariableDeclarator",
-                                "id": {
+                        "type": "ExpressionStatement",
+                        "expression": {
+                            "type": "CallExpression",
+                            "callee": {
+                                "type": "MemberExpression",
+                                "computed": false,
+                                "object": {
                                     "type": "Identifier",
                                     "name": "gl"
                                 },
-                                "init": {
-                                    "type": "Literal",
-                                    "value": null
-                                }
-                            }
-                        ],
-                        "kind": "var"
-                    },
-                    {
-                        "type": "VariableDeclaration",
-                        "declarations": [
-                            {
-                                "type": "VariableDeclarator",
-                                "id": {
+                                "property": {
                                     "type": "Identifier",
-                                    "name": "messageField"
-                                },
-                                "init": {
-                                    "type": "Literal",
-                                    "value": null
+                                    "name": "bindRenderbuffer"
                                 }
-                            }
-                        ],
-                        "kind": "var"
-                    },
-                    {
-                        "type": "ExpressionStatement",
-                        "expression": {
-                            "type": "AssignmentExpression",
-                            "operator": "=",
-                            "left": {
-                                "type": "Identifier",
-                                "name": "canvas"
                             },
-                            "right": {
-                                "type": "CallExpression",
-                                "callee": {
+                            "arguments": [
+                                {
                                     "type": "MemberExpression",
                                     "computed": false,
                                     "object": {
                                         "type": "Identifier",
-                                        "name": "document"
+                                        "name": "gl"
                                     },
                                     "property": {
                                         "type": "Identifier",
-                                        "name": "getElementById"
+                                        "name": "RENDERBUFFER"
                                     }
                                 },
-                                "arguments": [
-                                    {
-                                        "type": "Literal",
-                                        "value": "myCanvas1"
-                                    }
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        "type": "ExpressionStatement",
-                        "expression": {
-                            "type": "AssignmentExpression",
-                            "operator": "=",
-                            "left": {
-                                "type": "Identifier",
-                                "name": "gl"
-                            },
-                            "right": {
-                                "type": "LogicalExpression",
-                                "operator": "||",
-                                "left": {
-                                    "type": "CallExpression",
-                                    "callee": {
-                                        "type": "MemberExpression",
-                                        "computed": false,
-                                        "object": {
-                                            "type": "Identifier",
-                                            "name": "canvas"
-                                        },
-                                        "property": {
-                                            "type": "Identifier",
-                                            "name": "getContext"
-                                        }
-                                    },
-                                    "arguments": [
-                                        {
-                                            "type": "Literal",
-                                            "value": "wedbgl"
-                                        }
-                                    ]
-                                },
-                                "right": {
-                                    "type": "CallExpression",
-                                    "callee": {
-                                        "type": "MemberExpression",
-                                        "computed": false,
-                                        "object": {
-                                            "type": "Identifier",
-                                            "name": "canvas"
-                                        },
-                                        "property": {
-                                            "type": "Identifier",
-                                            "name": "getContext"
-                                        }
-                                    },
-                                    "arguments": [
-                                        {
-                                            "type": "Literal",
-                                            "value": "experimenta3l-webgl"
-                                        }
-                                    ]
+                                {
+                                    "type": "Identifier",
+                                    "name": "renderbuffer"
                                 }
-                            }
+                            ]
                         }
                     }
                 ]

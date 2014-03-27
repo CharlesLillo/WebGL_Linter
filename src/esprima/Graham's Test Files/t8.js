@@ -1,0 +1,3 @@
+function main(){
+        gl.createBuffer();
+}
