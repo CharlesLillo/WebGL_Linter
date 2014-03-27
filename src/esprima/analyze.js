@@ -123,11 +123,138 @@ function analyzeArgs(functionName, args) {
         if (args.length != 0)
             error(8);
     }
+
+    tobyAnalyzeArgs(functionName, args);
 }
 
 //the stuff Toby wrote--will put in the above function when done, bros
 function tobyAnalyzeArgs(functionName, args) {
-
+    if (functionName == "getUniformLocation") {
+        if(args.length != 2)
+            tobyError(103);
+        if(args[0].type != "Identifier")
+            tobyError(101);
+        if(args[1].type != "Literal")
+            tobyError(102);
+    }
+    if (functionName == "pixelStorei") {
+        if(args.length != 2)
+            tobyError(104);
+        switch(args[0].property.name) {
+            case "PACK_ALIGNMENT":
+                break;
+            case "UNPACK_ALIGNMENT":
+                break;
+            case "UNPACK_FLIP_Y_WEBGL":
+                break;
+            case "UNPACK_PREMULTIPLY_ALPHA_WEBGL":
+                break;
+            case "UNPACK_COLORSPACE_CONVERSION_WEBGL":
+                break;
+            default:
+                tobyError(105);
+        }
+        if(args[1].type != "Literal")
+            tobyError(106);
+    }
+    if (functionName == "generateMipmap") {
+        if(args.length != 1)
+            tobyError(107);
+        switch(args[0].property.name) {
+            case "TEXTURE_2D":
+                break;
+            case "TEXTURE_CUBE_MAP":
+                break;
+            default:
+                tobyError(107);
+        }
+    }
+    if (functionName == "uniformMatrix4fv") {
+        if(args.length != 3) {
+            tobyError(108);
+            return;
+        }
+        if(args[0].type != "Identifier")
+            tobyError(109);
+        if(args[1].property.name != "FALSE")
+            tobyError(110);
+        if(args[2].type != "Identifier")
+            tobyError(111);
+    }
+    if (functionName == "uniform3fv") {
+        if(args.length != 2) {
+            tobyError(112);
+            return;
+        }
+        if(args[0].type != "Identifier")
+            tobyError(113);
+        if(args[1].type != "Identifier")
+            tobyError(114);
+    }
+    if (functionName == "uniform1f") {
+        if(args.length != 2) {
+            tobyError(115);
+            return;
+        }
+        if(args[0].type != "Identifier")
+            tobyError(116);
+        if(args[1].type != "Literal")
+            tobyError(117);
+    }
+    if (functionName == "viewport") {
+        if(args.length != 4) {
+            tobyError(118);
+            return;
+        }
+        if(args[0].type != "Literal")
+            tobyError(119);
+        if(args[1].type != "Literal")
+            tobyError(120);
+        if(args[2].type != "Literal")
+            tobyError(121);
+        if(args[3].type != "Literal")
+            tobyError(122);
+    }
+    if (functionName == "shaderSource") {
+        if(args.length != 2) {
+            tobyError(123);
+            return;
+        }
+        if(args[0].type != "Identifier")
+            tobyError(124);
+        if(args[1].type != "Literal")
+            tobyError(125);
+    }
+    if (functionName == "compileShader") {
+        if(args.length != 1) {
+            tobyError(126);
+            return;
+        }
+        if(args[0].type != "Identifier")
+            tobyError(127);
+    }
+    if (functionName == "attachShader") {
+        if(args.length != 2) {
+            tobyError(128);
+            return;
+        }
+        if(args[0].type != "Identifier")
+            tobyError(129);
+        if(args[1].type != "Identifier")
+            tobyError(130);
+    }
+    if (functionName == "linkProgram") {
+        if(args.length != 1) {
+            tobyError(131);
+            return;
+        }
+        if(args[0].type != "Identifier")
+            tobyError(132);
+    }
+    if (functionName == "createProgram") {
+        if (args.length != 0)
+            tobyError(100);
+    }
 }
 
 //Error output function. Will change to an array of errors that are printed at the end of traversing the ast.
@@ -160,6 +287,16 @@ function error(err) {
             break;
         case 8:
             console.log("createRenderbuffer should not have arguments.");
+            break;
+    }
+
+}
+
+
+function tobyError(err) {
+    switch(err) {
+        case 100:
+            console.log("createProgram should not have arguments");
             break;
     }
 }
