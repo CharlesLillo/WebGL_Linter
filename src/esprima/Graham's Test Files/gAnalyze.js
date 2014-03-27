@@ -23,11 +23,15 @@ fs.writeFile("AST.json", tree, function(err) {
 
 
 //Analysis variable sets
+var targetBufferData = ["ARRAY_BUFFER", "ELEMENT_ARRAY_BUFFER"];
+var usageBufferData = ["STATIC_DRAW", "STREAM_DRAW", "DYNAMIC_DRAW"];
+var cap = ["BLEND", "CULL_FACE", "DEPTH_TEST", "DITHER", "POLYGON_OFFSET_FILL", "SAMPLE_ALPHA_TO_COVERAGE", "SAMPLE_COVERAGE", "SCISSOR_TEST", "STENCIL_TEST"];
+var attachments = ["COLOR_ATTACHMENT0", "DEPTH_ATTACHMENT", "STENCIL_ATTACHMENT"];
 var internalFormats = ["ALPHA", "RGB", "RGBA", "LUMINANCE", "LUMINANCE_ALPHA"];
+var internalFormatsRender = ["DEPTH_COMPONENT16", "RGBA4", "RGB5_A1", "RGB565", "STENCIL_INDEX8"];
 var byteTypes = ["UNSIGNED_BYTE", "UNSIGNED_SHORT_5_6_5", "UNSIGNED_SHORT_4_4_4_4", "UNSIGNED_SHORT_5_5_5_1"];
 var texTargets = ["TEXTURE_2D", "TEXTURE_CUBE_MAP_POSITIVE_X", "TEXTURE_CUBE_MAP_POSITIVE_Y", "TEXTURE_CUBE_MAP_POSITIVE_Z", "TEXTURE_CUBE_MAP_NEGATIVE_X",
-    "TEXTURE_CUBE_MAP_NEGATIVE_Y", "TEXTURE_CUBE_MAP_NEGATIVE_Z"
-];
+    "TEXTURE_CUBE_MAP_NEGATIVE_Y", "TEXTURE_CUBE_MAP_NEGATIVE_Z"];
 var bufferBits = ["COLOR_BUFFER_BIT", "DEPTH_BUFFER_BIT", "STENCIL_BUFFER_BIT"];
 
 //Begin Tests
@@ -88,7 +92,7 @@ function analyzeArgs(functionName, args) {
         if (args[1].property.type != "Identifier") {
             error(0);
         }
-        else if (args[1].property.name != "DEPTH_COMPONENT16") {
+        else if (internalFormatsRender.indexOf(args[1].property.name) == -1) {
             error(2);
         }
         // arg2
@@ -113,7 +117,7 @@ function analyzeArgs(functionName, args) {
         if (args[1].property.type != "Identifier") {
             error(0);
         }
-        else if (args[1].property.name != "COLOR_ATTACHMENT0") {
+        else if (attachments.indexOf(args[1].property.name) == -1) {
             error(5);
         }
         // arg2
@@ -222,7 +226,7 @@ function analyzeArgs(functionName, args) {
         if (args[0].property.type != "Identifier") {
             error(0);
         }
-        else if (args[0].property.name != "DEPTH_TEST") {
+        else if (cap.indexOf(args[0].property.name) == -1) {
             error(10);
         }
     }
@@ -237,7 +241,7 @@ function analyzeArgs(functionName, args) {
         if (args[0].property.type != "Identifier") {
             error(0);
         }
-        else if (args[0].property.name != "ARRAY_BUFFER") {
+        else if (targetBufferData.indexOf(args[0].property.name) == -1) {
             error(11);
         }
         // arg1
@@ -255,7 +259,7 @@ function analyzeArgs(functionName, args) {
         if (args[2].property.type != "Identifier") {
             error(0);
         }
-        else if (args[2].property.name != "STATIC_DRAW") {
+        else if (usageBufferData.indexOf(args[2].property.name) == -1) {
             error(12);
         }
     }
@@ -286,7 +290,7 @@ function error(err) {
             console.log("Invlaid Identifier. Expected Identifier: RENDERBUFFER");
             break;
         case 2:
-            console.log("Invalid Identifier. Expected Identifier: DEPTH_COMPONENT16");
+            console.log("Invalid Identifier. Expected Identifier: DEPTH_COMPONENT16, RGBA4, RGB5_A1, RGB565, STENCIL_INDEX8");
             break;
         case 3:
             console.log("Invalid Type. Expected Type: Identifier or Literal");
@@ -295,7 +299,7 @@ function error(err) {
             console.log("Invlaid Identifier. Expected Identifier: FRAMEBUFFER");
             break;
         case 5:
-            console.log("Invlaid Identifier. Expected Identifier: COLOR_ATTACHMENT0");
+            console.log("Invlaid Identifier. Expected Identifier: COLOR_ATTACHMENT0, DEPTH_ATTACHMENT, STENCIL_ATTACHMENT");
             break;
         case 6:
             console.log("Invlaid Identifier. Expected Identifier: TEXTURE_2D");
@@ -310,13 +314,13 @@ function error(err) {
             console.log("Invlaid Identifier. Expected Identifier: UNSIGNED_BYTE");
             break;
         case 10:
-            console.log("Invlaid Identifier. Expected Identifier: DEPTH_TEST");
+            console.log("Invlaid Identifier. Expected Identifier: BLEND, CULL_FACE, DEPTH_TEST, DITHER, POLYGON_OFFSET_FILL, SAMPLE_ALPHA_TO_COVERAGE, SAMPLE_COVERAGE, SCISSOR_TEST, STENCIL_TEST");
             break;
         case 11:
-            console.log("Invlaid Identifier. Expected Identifier: ARRAY_BUFFER");
+            console.log("Invlaid Identifier. Expected Identifier: ARRAY_BUFFER, ELEMENT_ARRAY_BUFFER");
             break;
         case 12:
-            console.log("Invlaid Identifier. Expected Identifier: STATIC_DRAW");
+            console.log("Invlaid Identifier. Expected Identifier: STATIC_DRAW, STREAM_DRAW, DYNAMIC_DRAW");
             break;
         case 13:
             console.log("Invlaid Identifier. Expected Identifier: Float32Array");

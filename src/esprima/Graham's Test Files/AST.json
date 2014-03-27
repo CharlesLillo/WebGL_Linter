@@ -1,0 +1,58 @@
+{
+    "type": "Program",
+    "body": [
+        {
+            "type": "FunctionDeclaration",
+            "id": {
+                "type": "Identifier",
+                "name": "main"
+            },
+            "params": [],
+            "defaults": [],
+            "body": {
+                "type": "BlockStatement",
+                "body": [
+                    {
+                        "type": "ExpressionStatement",
+                        "expression": {
+                            "type": "CallExpression",
+                            "callee": {
+                                "type": "MemberExpression",
+                                "computed": false,
+                                "object": {
+                                    "type": "Identifier",
+                                    "name": "gl"
+                                },
+                                "property": {
+                                    "type": "Identifier",
+                                    "name": "bindBuffer"
+                                }
+                            },
+                            "arguments": [
+                                {
+                                    "type": "MemberExpression",
+                                    "computed": false,
+                                    "object": {
+                                        "type": "Identifier",
+                                        "name": "gl"
+                                    },
+                                    "property": {
+                                        "type": "Identifier",
+                                        "name": "ARRAY_BUFFER"
+                                    }
+                                },
+                                {
+                                    "type": "Identifier",
+                                    "name": "laptopVertexPositionBuffer"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "rest": null,
+            "generator": false,
+            "expression": false
+        }
+    ]
+}
