@@ -125,6 +125,11 @@ function analyzeArgs(functionName, args) {
     }
 }
 
+//the stuff Toby wrote--will put in the above function when done, bros
+function tobyAnalyzeArgs(functionName, args) {
+
+}
+
 //Error output function. Will change to an array of errors that are printed at the end of traversing the ast.
 
 function error(err) {
