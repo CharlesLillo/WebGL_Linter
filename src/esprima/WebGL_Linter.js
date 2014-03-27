@@ -17,7 +17,7 @@ fs.writeFile("AST.json", tree, function(err) {
     if (err) {
         console.log(err);
     } else {
-        console.log("The AST was saved!");
+        console.log("The file was saved!");
     }
 });
 
@@ -30,7 +30,7 @@ var texTargets = ["TEXTURE_2D", "TEXTURE_CUBE_MAP_POSITIVE_X", "TEXTURE_CUBE_MAP
 ];
 var bufferBits = ["COLOR_BUFFER_BIT", "DEPTH_BUFFER_BIT", "STENCIL_BUFFER_BIT"];
 var numTypes = ["UNSIGNED_BYTE", "UNSIGNED_SHORT", "BYTE", "SHORT", "FIXED", "FLOAT"];
-var texTypes = ["TEXTURE_WRAP_S", "TEXTURE_WRAP_T", "TEXTURE_MIN_FILTER", "TEXTURE_MAG_FILTER"];
+var texTypes = ["TEXTURE_WRAP_S", "TEXTURE_WRAP_T", "TEXTURE_MIN_FILTER" ,"TEXTURE_MAG_FILTER"];
 //Begin Tests
 estraverse.traverse(ast, {
     enter: enter
@@ -65,23 +65,23 @@ function getFunctionName(node) {
 function analyzeArgs(functionName, args) {
     //Get Context
     if (functionName == "getContext") {
-        if (args.length != 1) {
-            error(29, functionName);
-        } else if (args[0].value != "webgl" && args[0].value != "experimental-webgl")
+        if (args.length != 1)
+            error(29, functionName)
+        if (args[0].value != "webgl" && args[0].value != "experimental-webgl")
             error(0);
     }
     //getExtension
     if (functionName == "getExtension") {
         if (args.length != 1)
             error(29, functionName)
-        else if (args[0].type != "Literal")
+        if (args[0].type != "Literal")
             error(1);
     }
     //clear(needs binary experssion masking check)
     if (functionName == "clear") {
         if (args.length != 1)
             error(29, functionName)
-        else if (args[0].type != "BinaryExpression") {
+        if (args[0].type != "BinaryExpression") {
             if (bufferBits.indexOf(args[0].property.name) == -1)
                 error(2);
         } else {
@@ -98,38 +98,39 @@ function analyzeArgs(functionName, args) {
     if (functionName == "bindFramebuffer") {
         if (args.length != 2)
             error(29, functionName)
-        else if (args[0].property.name != "FRAMEBUFFER" || (args[1].type != "Identifier"))
+        if (args[0].property.name != "FRAMEBUFFER" || (args[1].type != "Identifier"))
             error(4);
     }
     //bindTexture
     if (functionName == "bindTexture") {
         if (args.length != 2)
             error(29, functionName)
-        else if ((args[0].property.name != "TEXTURE_2D" && args[0].property.name != "TEXTURE_CUBE_MAP") || (args[1].type != "Identifier" && args[1].type != "Literal"))
+        if ((args[0].property.name != "TEXTURE_2D" && args[0].property.name != "TEXTURE_CUBE_MAP") || (args[1].type != "Identifier" && args[1].type != "Literal"))
             error(5);
     }
     //texParameteri (too many symbols to check for in arg[2], so ignoring)
     if (functionName == "texParameteri") {
-        if ((args[0].type != "MemberExpression") || (args[1].type != "MemberExpression") || (args[2].type != "MemberExpression")) {
+        if((args[0].type != "MemberExpression") || (args[1].type != "MemberExpression") || (args[2].type != "MemberExpression")){
             error(30);
-        } else if ((args[0].property.name != "TEXTURE_2D" && args[0].property.name != "TEXTURE_CUBE_MAP") || texTypes.indexOf(args[1].property.name) == -1)
-            error(6);
+        }
+        if ((args[0].property.name != "TEXTURE_2D" && args[0].property.name != "TEXTURE_CUBE_MAP") || texTypes.indexOf(args[1].property.name)==-1)
+        error(6);
     }
     //texImage2D
     if (functionName == "texImage2D") {
         if (args.length < 6)
             error(29, functionName)
-            //Too far an overestimation
-            // if ((texTargets.indexOf(args[0].property.name) == -1) ||
-            //     (args[1].type != "Literal" && args[1].type != "Identifier") ||
-            //     (internalFormats.indexOf(args[2].property.name) == -1) ||
-            //     (args[3].type != "Literal" && args[3].type != "Identifier") ||
-            //     (args[4].type != "Literal" && args[4].type != "Identifier") ||
-            //     (args[5].type != "Literal" && args[5].type != "Identifier") ||
-            //     (internalFormats.indexOf(args[6].property.name) == -1) ||
-            //     (byteTypes.indexOf(args[7].property.name) == -1) ||
-            //     (args[8].type != "Literal" && args[8].type != "Identifier"))
-            //   error(7);
+        //Too far an overestimation
+        // if ((texTargets.indexOf(args[0].property.name) == -1) ||
+        //     (args[1].type != "Literal" && args[1].type != "Identifier") ||
+        //     (internalFormats.indexOf(args[2].property.name) == -1) ||
+        //     (args[3].type != "Literal" && args[3].type != "Identifier") ||
+        //     (args[4].type != "Literal" && args[4].type != "Identifier") ||
+        //     (args[5].type != "Literal" && args[5].type != "Identifier") ||
+        //     (internalFormats.indexOf(args[6].property.name) == -1) ||
+        //     (byteTypes.indexOf(args[7].property.name) == -1) ||
+        //     (args[8].type != "Literal" && args[8].type != "Identifier"))
+        //   error(7);
     }
     //createRenderbuffer
     if (functionName == "createRenderbuffer") {
@@ -141,26 +142,27 @@ function analyzeArgs(functionName, args) {
     if (functionName == "uniform1f" || functionName == "uniform1i") {
         if (args.length != 4 && args.length != 2) {
             error(29, functionName);
-        } else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier")) {
+        }
+        if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier")) {
             error(21);
         }
     }
     if (functionName == "uniform2f" || functionName == "uniform2i") {
         if (args.length != 4 && args.length != 2)
             error(29, functionName);
-        else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
+        if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21);
     }
     if (functionName == "uniform3f" || functionName == "uniform3i") {
         if (args.length != 4 && args.length != 2)
             error(29, functionName);
-        else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
+        if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21);
     }
     if (functionName == "uniform4f" || functionName == "uniform4i") {
         if (args.length != 4 && args.length != 2)
             error(29, functionName);
-        else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
+        if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21);
     }
 
@@ -168,26 +170,27 @@ function analyzeArgs(functionName, args) {
     if (functionName == "uniform1fv" || functionName == "uniform1iv") {
         if (args.length != 4 && args.length != 2) {
             error(29, functionName);
-        } else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier")) {
+        }
+        if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier")) {
             error(21);
         }
     }
     if (functionName == "uniform2fv" || functionName == "uniform2iv") {
         if (args.length != 4 && args.length != 2)
             error(29, functionName);
-        else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
+        if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21);
     }
     if (functionName == "uniform3fv" || functionName == "uniform3iv") {
         if (args.length != 4 && args.length != 2)
             error(29, functionName);
-        else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
+        if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21);
     }
     if (functionName == "uniform4fv" || functionName == "uniform4iv") {
         if (args.length != 4 && args.length != 2)
             error(29, functionName);
-        else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
+        if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21);
 
     }
@@ -195,31 +198,32 @@ function analyzeArgs(functionName, args) {
     if (functionName == "vertexAttrib1f") {
         if (args.length != 4 && args.length != 2) {
             error(29, functionName);
-        } else if (args[0].type != "Literal" && args[0].type != "Identifier") {
+        }
+        if (args[0].type != "Literal" && args[0].type != "Identifier") {
             error(21);
         }
     }
     if (functionName == "vertexAttrib2f") {
         if (args.length != 4 && args.length != 2)
             error(29, functionName);
-        else if ((args[0].type != "Literal" && args[0].type != "Identifier" && args[0].type != "MemberExpression") || (args[1].type != "Literal" && args[1].type != "Identifier" && args[1].type != "MemberExpression"))
+        if ((args[0].type != "Literal" && args[0].type != "Identifier" && args[0].type != "MemberExpression" ) || (args[1].type != "Literal" && args[1].type != "Identifier" && args[1].type != "MemberExpression" ))
             error(21);
     }
     if (functionName == "vertexAttrib3f") {
         if (args.length != 4 && args.length != 2)
             error(29, functionName);
-        else if ((args[0].type != "Literal" && args[0].type != "Identifier" && args[0].type != "MemberExpression") || (args[1].type != "Literal" && args[1].type != "Identifier" && args[1].type != "MemberExpression"))
+        if ((args[0].type != "Literal" && args[0].type != "Identifier" && args[0].type != "MemberExpression" ) || (args[1].type != "Literal" && args[1].type != "Identifier" && args[1].type != "MemberExpression" ))
             error(21);
     }
     if (functionName == "vertexAttrib4f") {
         if (args.length != 4 && args.length != 2)
             error(29, functionName);
-        else if ((args[0].type != "Literal" && args[0].type != "Identifier" && args[0].type != "MemberExpression") || (args[1].type != "Literal" && args[1].type != "Identifier" && args[1].type != "MemberExpression"))
+        if ((args[0].type != "Literal" && args[0].type != "Identifier" && args[0].type != "MemberExpression" ) || (args[1].type != "Literal" && args[1].type != "Identifier" && args[1].type != "MemberExpression" ))
             error(21);
     }
     //Vertex Attrib Pointer-3 args: uint, int, enum, bool, long, long
     if (functionName == "vertexAttribPointer") {
-        if ((args[0].type != "Literal" && args[0].type != "Identifier" && args[0].type != "MemberExpression") || (args[1].type != "Literal" && args[1].type != "Identifier" && args[1].type != "MemberExpression"))
+        if ((args[0].type != "Literal" && args[0].type != "Identifier" && args[0].type != "MemberExpression" ) || (args[1].type != "Literal" && args[1].type != "Identifier" && args[1].type != "MemberExpression" ))
             error(22);
     }
 
@@ -227,7 +231,7 @@ function analyzeArgs(functionName, args) {
     if (functionName == "enableVertexAttribArray") {
         if (args.length != 1)
             error(29, functionName)
-        else if (args[0].type != "Identifier" && args[0].type != "Literal" && args[0].type != "MemberExpression")
+        if (args[0].type != "Identifier" && args[0].type != "Literal" && args[0].type != "MemberExpression")
             error(23);
     }
 
@@ -236,7 +240,7 @@ function analyzeArgs(functionName, args) {
     if (functionName == "disableVertexAttribArray") {
         if (args.length != 1)
             error(29, functionName)
-        else if (args[0].type != "Identifier" && args[0].type != "Literal" && args[0].type != "MemberExpression")
+        if (args[0].type != "Identifier" && args[0].type != "Literal"  && args[0].type != "MemberExpression")
             error(24);
     }
 
@@ -245,7 +249,7 @@ function analyzeArgs(functionName, args) {
     if (functionName == "activeTexture") {
         if (args.length != 1)
             error(29, functionName)
-        else if ((args[0].property.name != "TEXTURE0" && args[0].property.name != "TEXTURE1" && args[0].property.name != "TEXTURE2" && args[0].property.name != "TEXTURE3" && args[0].property.name != "TEXTURE4" && args[0].property.name != "TEXTURE5" && args[0].property.name != "TEXTURE6" && args[0].property.name != "TEXTURE7"))
+        if ((args[0].property.name != "TEXTURE0" && args[0].property.name != "TEXTURE1" && args[0].property.name != "TEXTURE2" && args[0].property.name != "TEXTURE3" && args[0].property.name != "TEXTURE4" && args[0].property.name != "TEXTURE5" && args[0].property.name != "TEXTURE6" && args[0].property.name != "TEXTURE7"))
             error(25);
     }
 
@@ -253,21 +257,21 @@ function analyzeArgs(functionName, args) {
     if (functionName == "drawArrays") {
         if (args.length != 3)
             error(29, functionName)
-        else if ((args[0].property.name != "LINE_STRIP" && args[0].property.name != "LINES" && args[0].property.name != "POINTS" && args[0].property.name != "TRIANGLE_STRIP" && args[0].property.name != "TRIANGLES") || (args[1].type != "Identifier" && args[1].type != "Literal") || (args[2].type != "Identifier" && args[2].type != "Literal"))
+        if ((args[0].property.name != "LINE_STRIP" && args[0].property.name != "LINES" && args[0].property.name != "POINTS" && args[0].property.name != "TRIANGLE_STRIP" && args[0].property.name != "TRIANGLES") || (args[1].type != "Identifier" && args[1].type != "Literal") || (args[2].type != "Identifier" && args[2].type != "Literal"))
             error(26);
     }
     //Use Program - void useProgram(Object program)
     if (functionName == "useProgram") {
         if (args.length != 1)
             error(29, functionName)
-        else if (args[0].type != "Identifier" && args[0].name != null)
+        if (args[0].type != "Identifier" && args[0].name != null)
             error(27);
     }
     //Get Attrib Location-ulong getAttribLocation(Object program, string name)
     if (functionName == "getAttribLocation") {
         if (args.length != 2)
             error(29, functionName)
-        else if (args[0].type != "Identifier" || (args[1].type != "Identifier" && args[1].type != "Literal"))
+        if (args[0].type != "Identifier" || (args[1].type != "Identifier" && args[1].type != "Literal"))
             error(28);
     }
 
@@ -275,110 +279,114 @@ function analyzeArgs(functionName, args) {
     tobyAnalyzeArgs(functionName, args);
 }
 
+//the stuff Toby wrote--will put in the above function when done, bros
+
 function tobyAnalyzeArgs(functionName, args) {
     if (functionName == "getUniformLocation") {
         if (args.length != 2)
-            tobyError(103, functionName);
-        else if (args[0].type != "Identifier")
-            tobyError(101, functionName);
-        else if (args[1].type != "Literal")
-            tobyError(102, functionName);
+            tobyError(103,functionName);
+        if (args[0].type != "Identifier")
+            tobyError(101,functionName);
+        if (args[1].type != "Literal")
+            tobyError(102,functionName);
     }
     if (functionName == "pixelStorei") {
         if (args.length != 2)
-            tobyError(104, functionName);
-        else {
-            switch (args[0].property.name) {
-                case "PACK_ALIGNMENT":
-                    break;
-                case "UNPACK_ALIGNMENT":
-                    break;
-                case "UNPACK_FLIP_Y_WEBGL":
-                    break;
-                case "UNPACK_PREMULTIPLY_ALPHA_WEBGL":
-                    break;
-                case "UNPACK_COLORSPACE_CONVERSION_WEBGL":
-                    break;
-                default:
-                    tobyError(105, functionName);
-            }
-            if (args[1].type != "Literal")
-                tobyError(106, functionName);
+            tobyError(104,functionName);
+        switch (args[0].property.name) {
+            case "PACK_ALIGNMENT":
+                break;
+            case "UNPACK_ALIGNMENT":
+                break;
+            case "UNPACK_FLIP_Y_WEBGL":
+                break;
+            case "UNPACK_PREMULTIPLY_ALPHA_WEBGL":
+                break;
+            case "UNPACK_COLORSPACE_CONVERSION_WEBGL":
+                break;
+            default:
+                tobyError(105,functionName);
         }
+        if (args[1].type != "Literal")
+            tobyError(106,functionName);
     }
     if (functionName == "generateMipmap") {
         if (args.length != 1)
-            tobyError(107, functionName);
-        else {
-            switch (args[0].property.name) {
-                case "TEXTURE_2D":
-                    break;
-                case "TEXTURE_CUBE_MAP":
-                    break;
-                default:
-                    tobyError(107, functionName);
-            }
+            tobyError(107,functionName);
+        switch (args[0].property.name) {
+            case "TEXTURE_2D":
+                break;
+            case "TEXTURE_CUBE_MAP":
+                break;
+            default:
+                tobyError(107,functionName);
         }
     }
     if (functionName == "uniformMatrix4fv") {
         if (args.length != 3) {
-            tobyError(108, functionName);
+            tobyError(108,functionName);
             return;
-        } else if (args[0].type != "Identifier")
-            tobyError(109, functionName);
-        else if (args[1].value != true && args[1].value != false)
-            tobyError(110, functionName);
-        else if (args[2].type != "Identifier" && args[2].type != "MemberExpression")
-            tobyError(111, functionName);
+        }
+        if (args[0].type != "Identifier")
+            tobyError(109,functionName);
+        if (args[1].value != true && args[1].value != false)
+            tobyError(110,functionName);
+        if (args[2].type != "Identifier" && args[2].type != "MemberExpression")
+            tobyError(111,functionName);
     }
     if (functionName == "viewport") {
         if (args.length != 4) {
-            tobyError(118, functionName);
+            tobyError(118,functionName);
             return;
-        } else if (args[0].type != "Literal")
-            tobyError(119, functionName);
-        else if (args[1].type != "Literal")
-            tobyError(120, functionName);
-        else if (args[2].type != "Literal")
-            tobyError(121, functionName);
-        else if (args[3].type != "Literal")
-            tobyError(122, functionName);
+        }
+        if (args[0].type != "Literal")
+            tobyError(119,functionName);
+        if (args[1].type != "Literal")
+            tobyError(120,functionName);
+        if (args[2].type != "Literal")
+            tobyError(121,functionName);
+        if (args[3].type != "Literal")
+            tobyError(122,functionName);
     }
     if (functionName == "shaderSource") {
         if (args.length != 2) {
-            tobyError(123, functionName);
+            tobyError(123,functionName);
             return;
-        } else if (args[0].type != "Identifier")
-            tobyError(124, functionName);
-        else if (args[1].type != "Literal")
-            tobyError(125, functionName);
+        }
+        if (args[0].type != "Identifier")
+            tobyError(124,functionName);
+        if (args[1].type != "Literal")
+            tobyError(125,functionName);
     }
     if (functionName == "compileShader") {
         if (args.length != 1) {
-            tobyError(126, functionName);
+            tobyError(126,functionName);
             return;
-        } else if (args[0].type != "Identifier")
-            tobyError(127, functionName);
+        }
+        if (args[0].type != "Identifier")
+            tobyError(127,functionName);
     }
     if (functionName == "attachShader") {
         if (args.length != 2) {
-            tobyError(128, functionName);
+            tobyError(128,functionName);
             return;
-        } else if (args[0].type != "Identifier")
-            tobyError(129, functionName);
-        else if (args[1].type != "Identifier")
-            tobyError(130, functionName);
+        }
+        if (args[0].type != "Identifier")
+            tobyError(129,functionName);
+        if (args[1].type != "Identifier")
+            tobyError(130,functionName);
     }
     if (functionName == "linkProgram") {
         if (args.length != 1) {
-            tobyError(131, functionName);
+            tobyError(131,functionName);
             return;
-        } else if (args[0].type != "Identifier")
-            tobyError(132, functionName);
+        }
+        if (args[0].type != "Identifier")
+            tobyError(132,functionName);
     }
     if (functionName == "createProgram") {
         if (args.length != 0 && args.length != 3)
-            tobyError(100, functionName);
+            tobyError(100,functionName);
     }
 }
 
@@ -443,7 +451,7 @@ function error(err, functionName) {
         case 29:
             console.log(functionName + " has an invalid or non-optimal number arguments.");
             break;
-        case 30:
+        case 30: 
             console.log("texParameteri should use gl defined constants as arguments.");
             break;
     }
@@ -452,5 +460,5 @@ function error(err, functionName) {
 
 
 function tobyError(err, functionName) {
-    console.log(functionName + "has an invalid or non-optimal number arguments.");
+            console.log(functionName + "has an invalid or non-optimal number arguments.");
 }

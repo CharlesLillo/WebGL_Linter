@@ -1,18 +1,51 @@
-Very easy setup to run this:
+-----REQUIREMENTS: 
 
-If you don't already have git bash and node installed, go get them. Once they are setup, run -
+Node.js installation on computer (preferably in PATH)
 
-npm install esprima
-npm install estraverse
+-----USAGE OF ANALYZER:
 
-Now you will be able to run the files.
+The modules needed to run this linter are included in the directory under node_modules.
 
-USAGE OF ANALYZER -
+The Zip comes with 2 very extensive test files to try the analyzer on (function syntax adheres to our linter best practice for interpretation) (test and test2).
+
+test3.js is a file with errors on the following lines (which are detected by the linter):
+
+32, 55, 376, 396, 407
 
 node [analysis file name] [file to be analyzed];
 
-eg. node analysis.js test.js
+eg. node WebGL_Linter.js test.js
 
-Console output will provide analysis results.
+-----HOW IT WORKS AND WHAT IT DOES:
 
-gogogogogogogogo!@@@@!
+This current version of the webgl parser lints basic programs for the WebGL binding on a subset of the most commonly used functions. What this linting involves is:
+
+- Checking for proper number of arguments
+
+- Checking for valid GL constnat types for arguments (if available)
+
+- Checking for valid argument types
+
+-----WHAT IT PRODUCES:
+
+- An AST.JSON file as saved output of the scanned in program.
+
+- Console output in the form of what function MAY have an error in it according to our code. The code may still run fine - if our linter tells you an error it is hopefully to point you in the right direction of what maybe wrong in the code (not necessarily in the logic!)
+
+- The console output will follow the flow of the program - if an error is thrown at a certain point, all points up to it have been checked in a linear scanning fashion.
+
+-----ISSUES:
+This is a very safe overapproximation of a lot of functions. For best results, adhere to the following standard for our linter:
+	
+	- Use Literals and Identifiers that point to functional or logical output in function arguements
+	- The ternary ? operator is not supported for function calls. 
+	- In some functions where function call outs are not common as an arguement, the function evaluation may cause an error (map to identifier).
+	- If a node error arises where it cannot finishing parsing, that means node wasn't able to detect a certain property of a linting evaluation (which could also be a source of your error! In that case, the best thing to do is refer to the line number it crashed on and refer to the analyze.js functions that is). Please refer to the first issue to prevent this in most cases.
+	- This linter is meant for starting WebGL programs! It's purpose is to help the programmmer figure out if their programs logic or simply a misplaced constant is the error, and is best used to that end.
+
+Thanks!
+
+Charles Lillo
+Toby Tobkin
+Graham Nicholson
+Cody McMahon
