@@ -604,7 +604,16 @@
                                                     "name": "uniform1f"
                                                 }
                                             },
-                                            "arguments": []
+                                            "arguments": [
+                                                {
+                                                    "type": "Identifier",
+                                                    "name": "shinyLoc"
+                                                },
+                                                {
+                                                    "type": "Identifier",
+                                                    "name": "shiny"
+                                                }
+                                            ]
                                         }
                                     },
                                     "alternate": null
@@ -1082,7 +1091,20 @@
                                                                                             "name": "disableVertexAttribArray"
                                                                                         }
                                                                                     },
-                                                                                    "arguments": []
+                                                                                    "arguments": [
+                                                                                        {
+                                                                                            "type": "MemberExpression",
+                                                                                            "computed": true,
+                                                                                            "object": {
+                                                                                                "type": "Identifier",
+                                                                                                "name": "attribLocations"
+                                                                                            },
+                                                                                            "property": {
+                                                                                                "type": "Identifier",
+                                                                                                "name": "i"
+                                                                                            }
+                                                                                        }
+                                                                                    ]
                                                                                 }
                                                                             },
                                                                             {
@@ -9080,6 +9102,14 @@
                                                 },
                                                 "arguments": [
                                                     {
+                                                        "type": "Identifier",
+                                                        "name": "pmLoc"
+                                                    },
+                                                    {
+                                                        "type": "Literal",
+                                                        "value": false
+                                                    },
+                                                    {
                                                         "type": "MemberExpression",
                                                         "computed": false,
                                                         "object": {
@@ -9519,7 +9549,20 @@
                                                                     "name": "activeTexture"
                                                                 }
                                                             },
-                                                            "arguments": []
+                                                            "arguments": [
+                                                                {
+                                                                    "type": "MemberExpression",
+                                                                    "computed": false,
+                                                                    "object": {
+                                                                        "type": "Identifier",
+                                                                        "name": "gl"
+                                                                    },
+                                                                    "property": {
+                                                                        "type": "Identifier",
+                                                                        "name": "TEXTURE1"
+                                                                    }
+                                                                }
+                                                            ]
                                                         }
                                                     },
                                                     {
@@ -9691,6 +9734,10 @@
                                                     }
                                                 },
                                                 "arguments": [
+                                                    {
+                                                        "type": "Identifier",
+                                                        "name": "mirrorSetLoc"
+                                                    },
                                                     {
                                                         "type": "Identifier",
                                                         "name": "setM"

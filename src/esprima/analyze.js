@@ -21,6 +21,19 @@ fs.writeFile("AST.json", tree, function(err) {
     }
 });
 
+//Reads shader code (from third argument in command line. If empty, skips this part)
+if (process.argv[3] != null) {
+    fs.readFile(process.argv[3], 'utf8', function(err, data) {
+        if (err) {
+            return "Your shader code wasnt found. ERROR: "+console.log(err);
+        }
+
+        //Set variables here to grab the types we need
+        var attrcount = data.match(/attribute/g);  
+        var uniformcount = data.match(/uniform/g);  
+		console.log(uniformcount);
+    });
+}
 
 //Analysis variable sets
 var internalFormats = ["ALPHA", "RGB", "RGBA", "LUMINANCE", "LUMINANCE_ALPHA"];
@@ -31,6 +44,7 @@ var texTargets = ["TEXTURE_2D", "TEXTURE_CUBE_MAP_POSITIVE_X", "TEXTURE_CUBE_MAP
 var bufferBits = ["COLOR_BUFFER_BIT", "DEPTH_BUFFER_BIT", "STENCIL_BUFFER_BIT"];
 var numTypes = ["UNSIGNED_BYTE", "UNSIGNED_SHORT", "BYTE", "SHORT", "FIXED", "FLOAT"];
 var texTypes = ["TEXTURE_WRAP_S", "TEXTURE_WRAP_T", "TEXTURE_MIN_FILTER", "TEXTURE_MAG_FILTER"];
+
 //Begin Tests
 estraverse.traverse(ast, {
     enter: enter
