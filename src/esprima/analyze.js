@@ -6,6 +6,7 @@ var estraverse = require('estraverse');
 //Globals for use
 var filename = process.argv[2];
 console.log('Processing', filename, '\n');
+var uniformList = [];
 
 //AST Object created by esprima, for argv program name
 var ast = esprima.parse(fs.readFileSync(filename));
@@ -21,20 +22,6 @@ fs.writeFile("AST.json", tree, function(err) {
     }
 });
 
-//Reads shader code (from third argument in command line. If empty, skips this part)
-if (process.argv[3] != null) {
-    fs.readFile(process.argv[3], 'utf8', function(err, data) {
-        if (err) {
-            return "Your shader code wasnt found. ERROR: "+console.log(err);
-        }
-
-        //Set variables here to grab the types we need
-        var attrcount = data.match(/attribute/g);  
-        var uniformcount = data.match(/uniform/g);  
-		console.log(uniformcount);
-    });
-}
-
 //Analysis variable sets
 var internalFormats = ["ALPHA", "RGB", "RGBA", "LUMINANCE", "LUMINANCE_ALPHA"];
 var byteTypes = ["UNSIGNED_BYTE", "UNSIGNED_SHORT_5_6_5", "UNSIGNED_SHORT_4_4_4_4", "UNSIGNED_SHORT_5_5_5_1"];
@@ -46,9 +33,34 @@ var numTypes = ["UNSIGNED_BYTE", "UNSIGNED_SHORT", "BYTE", "SHORT", "FIXED", "FL
 var texTypes = ["TEXTURE_WRAP_S", "TEXTURE_WRAP_T", "TEXTURE_MIN_FILTER", "TEXTURE_MAG_FILTER"];
 
 //Begin Tests
+
+//Function verification tests
 estraverse.traverse(ast, {
     enter: enter
 });
+
+//Shader test
+//Reads shader code (from third argument in command line. If empty, skips this part)
+if (process.argv[3] != null) {
+    fs.readFile(process.argv[3], 'utf8', function(err, data) {
+        if (err) {
+            return "Your shader code wasnt found. ERROR: " + console.log(err);
+        }
+
+        //Set variables here to grab the types we need
+        var attrcount = data.match(/attribute/g);
+
+        //Uniform type checking
+        var uniformListGLSL = [];
+        for (var i = 0; i < uniformList.length; i++) {
+            var uniformName = new RegExp(uniformList[i]);
+            var uniformcount = data.match(uniformName);
+            if (uniformcount == null)
+                console.log("'" + uniformList[i] + "'" + " isn't declared in the GLSL");
+        }
+
+    });
+}
 
 //Estraverse enter function
 
@@ -297,6 +309,9 @@ function tobyAnalyzeArgs(functionName, args) {
             tobyError(101, functionName);
         else if (args[1].type != "Literal")
             tobyError(102, functionName);
+        else
+            uniformList.push(args[1].value);
+
     }
     if (functionName == "pixelStorei") {
         if (args.length != 2)
