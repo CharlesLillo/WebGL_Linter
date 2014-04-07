@@ -1,4 +1,4 @@
-attribute vec2 vertexPoint;
+attribute vec2 position;
 attribute vec2 texCoords;
 uniform mat4 inverseTransposeModelT;
 uniform int shadow;

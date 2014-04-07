@@ -7,6 +7,7 @@ var estraverse = require('estraverse');
 var filename = process.argv[2];
 console.log('Processing', filename, '\n');
 var uniformList = [];
+var attribList = [];
 
 //AST Object created by esprima, for argv program name
 var ast = esprima.parse(fs.readFileSync(filename));
@@ -50,13 +51,21 @@ if (process.argv[3] != null) {
         //Set variables here to grab the types we need
         var attrcount = data.match(/attribute/g);
 
+        var attribListGLSL = [];
+        for (var i = 0; i < uniformList.length; i++) {
+            var attribName = new RegExp(attribList[i]);
+            var attribcount = data.match(attribName);
+            if (attribcount == null)
+                console.log("The attribute '" + attribList[i] + "'" + " isn't declared in the shader code");
+        }
+
         //Uniform type checking
         var uniformListGLSL = [];
         for (var i = 0; i < uniformList.length; i++) {
             var uniformName = new RegExp(uniformList[i]);
             var uniformcount = data.match(uniformName);
             if (uniformcount == null)
-                console.log("'" + uniformList[i] + "'" + " isn't declared in the GLSL");
+                console.log("The uniform '" + uniformList[i] + "'" + " isn't declared in the shader code");
         }
 
     });
@@ -295,6 +304,8 @@ function analyzeArgs(functionName, args) {
             error(29, functionName)
         else if (args[0].type != "Identifier" || (args[1].type != "Identifier" && args[1].type != "Literal"))
             error(28);
+        else
+            attribList.push(args[1].value);
     }
 
     //Toby's extended function checks
