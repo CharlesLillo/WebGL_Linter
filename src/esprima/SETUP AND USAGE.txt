@@ -14,7 +14,7 @@ test3.js is a file with errors on the following lines (which are detected by the
 
 node [analysis file name] [file to be analyzed];
 
-eg. node WebGL_Linter.js test.js
+eg. node analyze.js test.js
 
 -----HOW IT WORKS AND WHAT IT DOES:
 
