@@ -18,6 +18,7 @@ var gErrors = [];
  reason: the problem
  evidence: the text line in which the problem occurred
  */
+
 function Error(location, reason, evidence) {
     this.location = location;
     this.reason = reason;
@@ -39,7 +40,9 @@ function Error(location, reason, evidence) {
 
 
 //AST Object created by esprima, for argv program name
-var ast = esprima.parse(fs.readFileSync(filename), {loc: true});
+var ast = esprima.parse(fs.readFileSync(filename), {
+    loc: true
+});
 //var ast = esprima.parse(fs.readFileSync(filename), {tokens: true});
 
 //Writes AST to a file called AST.json
@@ -108,15 +111,16 @@ function enter(node) {
     if (node.type === 'CallExpression') {
         //Pulls the argument node from the current node
         var args = node['arguments'];
-          //Removed 4/8
-//        //Pushes the functions names to our function list
-//        var functionName = getFunctionName(node);
         analyzeArgs(node, args);
     }
 }
 
-//Function that gets the function name depending on how it was called
+//Error output
+for (var i = 0; i < gErrors.length; i++) {
+    console.log(gErrors[i].location.start.line + ": " + gErrors[i].reason);
+}
 
+//Function that gets the function name depending on how it was called
 function getFunctionName(node) {
     if (node.callee.type === 'Identifier') {
         return node.callee.name;
@@ -350,18 +354,18 @@ function tobyAnalyzeArgs(node, args) {
 
     if (functionName == "getUniformLocation") {
         if (args.length != 2)
-            tobyError(103, node);
+            error(103, node);
         else if (args[0].type != "Identifier")
-            tobyError(101, node);
+            error(101, node);
         else if (args[1].type != "Literal")
-            tobyError(102, node);
+            error(102, node);
         else
             uniformList.push(args[1].value);
 
     }
     if (functionName == "pixelStorei") {
         if (args.length != 2)
-            tobyError(104, node);
+            error(104, node);
         else {
             switch (args[0].property.name) {
                 case "PACK_ALIGNMENT":
@@ -375,15 +379,15 @@ function tobyAnalyzeArgs(node, args) {
                 case "UNPACK_COLORSPACE_CONVERSION_WEBGL":
                     break;
                 default:
-                    tobyError(105, node);
+                    error(105, node);
             }
             if (args[1].type != "Literal")
-                tobyError(106, node);
+                error(106, node);
         }
     }
     if (functionName == "generateMipmap") {
         if (args.length != 1)
-            tobyError(107, node);
+            error(107, node);
         else {
             switch (args[0].property.name) {
                 case "TEXTURE_2D":
@@ -391,69 +395,69 @@ function tobyAnalyzeArgs(node, args) {
                 case "TEXTURE_CUBE_MAP":
                     break;
                 default:
-                    tobyError(107, node);
+                    error(107, node);
             }
         }
     }
     if (functionName == "uniformMatrix4fv") {
         if (args.length != 3) {
-            tobyError(108, node);
+            error(108, node);
             return;
         } else if (args[0].type != "Identifier")
-            tobyError(109, node);
+            error(109, node);
         else if (args[1].value != true && args[1].value != false)
-            tobyError(110, node);
+            error(110, node);
         else if (args[2].type != "Identifier" && args[2].type != "MemberExpression")
-            tobyError(111, node);
+            error(111, node);
     }
     if (functionName == "viewport") {
         if (args.length != 4) {
-            tobyError(118, node);
+            error(118, node);
             return;
         } else if (args[0].type != "Literal")
-            tobyError(119, node);
+            error(119, node);
         else if (args[1].type != "Literal")
-            tobyError(120, node);
+            error(120, node);
         else if (args[2].type != "Literal")
-            tobyError(121, node);
+            error(121, node);
         else if (args[3].type != "Literal")
-            tobyError(122, node);
+            error(122, node);
     }
     if (functionName == "shaderSource") {
         if (args.length != 2) {
-            tobyError(123, node);
+            error(123, node);
             return;
         } else if (args[0].type != "Identifier")
-            tobyError(124, node);
+            error(124, node);
         else if (args[1].type != "Literal")
-            tobyError(125, node);
+            error(125, node);
     }
     if (functionName == "compileShader") {
         if (args.length != 1) {
-            tobyError(126, node);
+            error(126, node);
             return;
         } else if (args[0].type != "Identifier")
-            tobyError(127, node);
+            error(127, node);
     }
     if (functionName == "attachShader") {
         if (args.length != 2) {
-            tobyError(128, node);
+            error(128, node);
             return;
         } else if (args[0].type != "Identifier")
-            tobyError(129, node);
+            error(129, node);
         else if (args[1].type != "Identifier")
-            tobyError(130, node);
+            error(130, node);
     }
     if (functionName == "linkProgram") {
         if (args.length != 1) {
-            tobyError(131, node);
+            error(131, node);
             return;
         } else if (args[0].type != "Identifier")
-            tobyError(132, node);
+            error(132, node);
     }
     if (functionName == "createProgram") {
         if (args.length != 0 && args.length != 3)
-            tobyError(100, node);
+            error(100, node);
     }
 }
 
@@ -521,24 +525,22 @@ function error(err, node) {
             reason = ("getAttribLocation has invalid arguments.");
             break;
         case 29:
-           reason = (functionName + " has an invalid or non-optimal number arguments.");
+            reason = (functionName + " has an invalid or non-optimal number arguments.");
             break;
         case 30:
             reason = ("texParameteri should use gl defined constants as arguments.");
             break;
-    }
-    // so that the same thing is still sent to console as before Toby's 4/8/14 commit
-    console.log(reason);
+        //Catches all toby's errors for the time being
+        default:
+            var functionName = getFunctionName(node);
+            reason = functionName + " has an invalid or non-optimal number arguments.";
+            break;
 
-    //TODO: TT 4/8/14 right now this doesn't give human-readable output to the "evidence" variable; we may need to find a better hack for getting the actual text of the program
-    evidence = JSON.stringify(node);
-    //TODO: TT 4/8/14 construct the Error object and push it onto gErrors
-    errorToPush = new Error(location, reason, evidence);
-    gErrors.push(errorToPush);
 }
 
-
-function tobyError(err, node) {
-    var functionName = getFunctionName(node);
-    console.log(functionName + "has an invalid or non-optimal number arguments.");
+//TODO: TT 4/8/14 right now this doesn't give human-readable output to the "evidence" variable; we may need to find a better hack for getting the actual text of the program
+evidence = JSON.stringify(node);
+//TODO: TT 4/8/14 construct the Error object and push it onto gErrors
+errorToPush = new Error(location, reason, evidence);
+gErrors.push(errorToPush);
 }
