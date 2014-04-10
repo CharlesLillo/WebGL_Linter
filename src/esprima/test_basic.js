@@ -1,5 +1,5 @@
 function main(){
-	var program, matLoc, intLoc;
+	var program, matLoc, intLoc, buff;
 	var a_Position;
 	program = gl.createProgram();
         gl.attachShader(program, vs);
@@ -8,4 +8,5 @@ function main(){
 	matLoc = gl.getUniformLocation(program, "broken_inverseTransposeModelT");
 	intLoc = gl.getUniformLocation(program, "shadow");
 	a_Position = gl.getAttribLocation(program, 'position');
+	buff = gl.createBuffer();
 }

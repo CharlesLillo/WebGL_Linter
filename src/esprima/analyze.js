@@ -9,6 +9,8 @@ console.log('Processing', filename, '\n');
 var uniformList = [];
 var attribList = [];
 var gErrors = [];
+var bufferList = [];
+var bindingBuffers = [];
 
 /* Error object. These can be stored in an array to output in a console, webpage, or whatever.
  Errors are simply pushed onto an array as the analysis procedes, an idea borrowed from JSLint/JSHint.
@@ -72,6 +74,8 @@ estraverse.traverse(ast, {
     enter: enter
 });
 
+
+// Tests that occur after first pass-------------------- 
 //Shader test
 //Reads shader code (from third argument in command line. If empty, skips this part)
 if (process.argv[3] != null) {
@@ -103,6 +107,14 @@ if (process.argv[3] != null) {
     });
 }
 
+//Buffer allocation
+if (bufferList.length > 0) {
+    console.log(bufferList);
+    console.log(bindingBuffers);
+}
+
+
+//End tests----------------------------------------------
 //Estraverse enter function
 
 function enter(node) {
@@ -113,6 +125,17 @@ function enter(node) {
         var args = node['arguments'];
         analyzeArgs(node, args);
     }
+    //Collects declared buffers in an array
+    if (node.type === 'ExpressionStatement' && node.expression.type == 'AssignmentExpression') {
+        if (node.expression.right != null && node.expression.right.callee != null && node.expression.right.callee.property != null) {
+            if (node.expression.right.callee.property.name == 'createBuffer') {
+                if (node.expression.left.name != null)
+                    bufferList.push(node.expression.left.name);
+                if (node.expression.left.object != null)
+                    bufferList.push(node.expression.left.object.name);
+            }
+        }
+    }
 }
 
 //Error output
@@ -121,6 +144,7 @@ for (var i = 0; i < gErrors.length; i++) {
 }
 
 //Function that gets the function name depending on how it was called
+
 function getFunctionName(node) {
     if (node.callee.type === 'Identifier') {
         return node.callee.name;
@@ -160,6 +184,21 @@ function analyzeArgs(node, args) {
             if (bufferBits.indexOf(args[0].left.property.name) == -1 || bufferBits.indexOf(args[0].right.property.name) == -1)
                 error(2);
         }
+    }
+    //createBuffer
+    if (functionName == "createBuffer") {
+        if (args.length != 0) {
+            error(31, node);
+        }
+    }
+    //bindBuffer put array of buffer values here, other way of getting bound buffer names (objects i think)
+    if (functionName == "bindBuffer") {
+        if (args.length != 2)
+            error(29, node)
+        //else if (args[0].property.name != "ARRAY_BUFFER" || (args[1].type != "Identifier"))
+            //error(32);
+        else
+            bindingBuffers.push(args[1].name)
     }
     //createFrameBuffer
     if (functionName == "createFramebuffer") {
@@ -211,26 +250,26 @@ function analyzeArgs(node, args) {
 
     //Begin Cody Errors
     if (functionName == "uniform1f" || functionName == "uniform1i") {
-        if (args.length != 4 && args.length != 2) {
+        if (args.length < 2 || args.length > 4) {
             error(29, node);
         } else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier")) {
             error(21);
         }
     }
     if (functionName == "uniform2f" || functionName == "uniform2i") {
-        if (args.length != 4 && args.length != 2)
+        if (args.length < 2 || args.length > 4)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21);
     }
     if (functionName == "uniform3f" || functionName == "uniform3i") {
-        if (args.length != 4 && args.length != 2)
+        if (args.length < 2 || args.length > 4)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21);
     }
     if (functionName == "uniform4f" || functionName == "uniform4i") {
-        if (args.length != 4 && args.length != 2)
+        if (args.length < 2 || args.length > 4)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21);
@@ -238,26 +277,26 @@ function analyzeArgs(node, args) {
 
     //Uniform - 2 args: uint, array void uniform[1234][fi]v(uint location, Array value)
     if (functionName == "uniform1fv" || functionName == "uniform1iv") {
-        if (args.length != 4 && args.length != 2) {
+        if (args.length < 2 || args.length > 4) {
             error(29, node);
         } else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier")) {
             error(21);
         }
     }
     if (functionName == "uniform2fv" || functionName == "uniform2iv") {
-        if (args.length != 4 && args.length != 2)
+        if (args.length < 2 || args.length > 4)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21);
     }
     if (functionName == "uniform3fv" || functionName == "uniform3iv") {
-        if (args.length != 4 && args.length != 2)
+        if (args.length < 2 || args.length > 4)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21);
     }
     if (functionName == "uniform4fv" || functionName == "uniform4iv") {
-        if (args.length != 4 && args.length != 2)
+        if (args.length < 2 || args.length > 4)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21);
@@ -265,26 +304,26 @@ function analyzeArgs(node, args) {
     }
     //Vertex Attrib 3 F- multiple, maybe add fv
     if (functionName == "vertexAttrib1f") {
-        if (args.length != 4 && args.length != 2) {
+        if (args.length < 2 || args.length > 4) {
             error(29, node);
         } else if (args[0].type != "Literal" && args[0].type != "Identifier") {
             error(21);
         }
     }
     if (functionName == "vertexAttrib2f") {
-        if (args.length != 4 && args.length != 2)
+        if (args.length < 2 || args.length > 4)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier" && args[0].type != "MemberExpression") || (args[1].type != "Literal" && args[1].type != "Identifier" && args[1].type != "MemberExpression"))
             error(21);
     }
     if (functionName == "vertexAttrib3f") {
-        if (args.length != 4 && args.length != 2)
+        if (args.length < 2 || args.length > 4)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier" && args[0].type != "MemberExpression") || (args[1].type != "Literal" && args[1].type != "Identifier" && args[1].type != "MemberExpression"))
             error(21);
     }
     if (functionName == "vertexAttrib4f") {
-        if (args.length != 4 && args.length != 2)
+        if (args.length < 2 || args.length > 4)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier" && args[0].type != "MemberExpression") || (args[1].type != "Literal" && args[1].type != "Identifier" && args[1].type != "MemberExpression"))
             error(21);
@@ -344,14 +383,17 @@ function analyzeArgs(node, args) {
         else
             attribList.push(args[1].value);
     }
-
-    //Toby's extended function checks
-    tobyAnalyzeArgs(node, args);
-}
-
-function tobyAnalyzeArgs(node, args) {
-    var functionName = getFunctionName(node);
-
+    if (functionName == "uniformMatrix4fv") {
+        if (args.length != 3) {
+            error(108, node);
+            return;
+        } else if (args[0].type != "Identifier")
+            error(109, node);
+        else if (args[1].value != true && args[1].value != false)
+            error(110, node);
+        else if (args[2].type != "Identifier" && args[2].type != "MemberExpression")
+            error(111, node);
+    }
     if (functionName == "getUniformLocation") {
         if (args.length != 2)
             error(103, node);
@@ -398,17 +440,6 @@ function tobyAnalyzeArgs(node, args) {
                     error(107, node);
             }
         }
-    }
-    if (functionName == "uniformMatrix4fv") {
-        if (args.length != 3) {
-            error(108, node);
-            return;
-        } else if (args[0].type != "Identifier")
-            error(109, node);
-        else if (args[1].value != true && args[1].value != false)
-            error(110, node);
-        else if (args[2].type != "Identifier" && args[2].type != "MemberExpression")
-            error(111, node);
     }
     if (functionName == "viewport") {
         if (args.length != 4) {
@@ -530,17 +561,23 @@ function error(err, node) {
         case 30:
             reason = ("texParameteri should use gl defined constants as arguments.");
             break;
-        //Catches all toby's errors for the time being
+        case 31:
+            reason = ("createBuffer should not have arguments.");
+            break;
+        case 32:
+            reason = ("Buffer not bound correctly.");
+            break
+            //Catches all generic arg errors
         default:
             var functionName = getFunctionName(node);
             reason = functionName + " has an invalid or non-optimal number arguments.";
             break;
 
-}
+    }
 
-//TODO: TT 4/8/14 right now this doesn't give human-readable output to the "evidence" variable; we may need to find a better hack for getting the actual text of the program
-evidence = JSON.stringify(node);
-//TODO: TT 4/8/14 construct the Error object and push it onto gErrors
-errorToPush = new Error(location, reason, evidence);
-gErrors.push(errorToPush);
+    //TODO: TT 4/8/14 right now this doesn't give human-readable output to the "evidence" variable; we may need to find a better hack for getting the actual text of the program
+    evidence = JSON.stringify(node);
+    //TODO: TT 4/8/14 construct the Error object and push it onto gErrors
+    errorToPush = new Error(location, reason, evidence);
+    gErrors.push(errorToPush);
 }
