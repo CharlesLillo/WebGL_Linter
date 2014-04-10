@@ -5,7 +5,7 @@ var estraverse = require('estraverse');
 
 //Globals for use
 var filename = process.argv[2];
-console.log('Processing', filename, '\n');
+console.log('---------- Processing', filename, '----------\n');
 var uniformList = [];
 var attribList = [];
 var gErrors = [];
@@ -53,7 +53,7 @@ fs.writeFile("AST.json", tree, function(err) {
     if (err) {
         console.log(err);
     } else {
-        console.log("The AST was saved!");
+        console.log("\nThe AST was saved!");
     }
 });
 
@@ -66,6 +66,7 @@ var texTargets = ["TEXTURE_2D", "TEXTURE_CUBE_MAP_POSITIVE_X", "TEXTURE_CUBE_MAP
 var bufferBits = ["COLOR_BUFFER_BIT", "DEPTH_BUFFER_BIT", "STENCIL_BUFFER_BIT"];
 var numTypes = ["UNSIGNED_BYTE", "UNSIGNED_SHORT", "BYTE", "SHORT", "FIXED", "FLOAT"];
 var texTypes = ["TEXTURE_WRAP_S", "TEXTURE_WRAP_T", "TEXTURE_MIN_FILTER", "TEXTURE_MAG_FILTER"];
+var bufferTypes = ["ELEMENT_ARRAY_BUFFER", "ARRAY_BUFFER"];
 
 //Begin Tests
 
@@ -75,7 +76,7 @@ estraverse.traverse(ast, {
 });
 
 
-// Tests that occur after first pass-------------------- 
+//------------------------Tests that occur after first pass-------------------- 
 //Shader test
 //Reads shader code (from third argument in command line. If empty, skips this part)
 if (process.argv[3] != null) {
@@ -107,10 +108,13 @@ if (process.argv[3] != null) {
     });
 }
 
-//Buffer allocation
-if (bufferList.length > 0) {
-    console.log(bufferList);
-    console.log(bindingBuffers);
+//Buffer allocation (maybe add position checking)
+if (bufferList.length > 0 && bindingBuffers.length > 0) {
+    for(var i = 0; i<bindingBuffers.length; i++){
+        //console.log(bufferList.indexOf(bindingBuffers[i]));
+        if(bufferList.indexOf(bindingBuffers[i]) == -1)
+            console.log("The buffer '"+bindingBuffers[i]+"'' may not have been created. ");
+    }
 }
 
 
@@ -194,11 +198,15 @@ function analyzeArgs(node, args) {
     //bindBuffer put array of buffer values here, other way of getting bound buffer names (objects i think)
     if (functionName == "bindBuffer") {
         if (args.length != 2)
-            error(29, node)
-        //else if (args[0].property.name != "ARRAY_BUFFER" || (args[1].type != "Identifier"))
-            //error(32);
-        else
-            bindingBuffers.push(args[1].name)
+            error(29, node);
+        else if (bufferTypes.indexOf(args[0].property.name) == -1 || (args[1].type != "Identifier" && (args[1].type != "MemberExpression")))
+            error(32, node);
+        else if (args[1].object!=null){
+            bindingBuffers.push(args[1].object.name);
+        }
+        else{
+            bindingBuffers.push(args[1].name);
+        }
     }
     //createFrameBuffer
     if (functionName == "createFramebuffer") {
@@ -565,7 +573,7 @@ function error(err, node) {
             reason = ("createBuffer should not have arguments.");
             break;
         case 32:
-            reason = ("Buffer not bound correctly.");
+            reason = ("Buffer not bound correctly. Invalid arguments.");
             break
             //Catches all generic arg errors
         default:

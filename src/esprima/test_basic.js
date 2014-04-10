@@ -9,4 +9,5 @@ function main(){
 	intLoc = gl.getUniformLocation(program, "shadow");
 	a_Position = gl.getAttribLocation(program, 'position');
 	buff = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, buff);
 }
