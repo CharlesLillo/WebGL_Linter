@@ -1,5 +1,5 @@
 function main(){
-	var program, matLoc, intLoc, buff, location;
+	var program, matLoc, intLoc, buff, location, frame;
 
 	var array1iv = new Array(1);
 	var array2iv = new Array(1, 2);
@@ -22,7 +22,8 @@ function main(){
 	vec3Loc = gl.getUniformLocation(program, "soda");
 	floatLoc = gl.getUniformLocation(program, "scale");
 	a_Position = gl.getAttribLocation(program, 'position');
-
+	frame = gl.createFramebuffer();
+	gl.bindFramebuffer(program, frame);
 	buff = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, buff);
 	gl.uniform1i(intLoc, 1);

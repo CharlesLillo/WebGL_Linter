@@ -10,7 +10,9 @@ var uniformList = [];
 var attribList = [];
 var gErrors = [];
 var bufferList = [];
+var framebufferList = [];
 var bindingBuffers = [];
+var bindingFramebuffers = [];
 var uniformArgList = [];
 var bindingUniforms = [];
 
@@ -79,6 +81,10 @@ estraverse.traverse(ast, {
 
 
 //------------------------Tests that occur after first pass-------------------- 
+//***********
+//***********
+//-----------------------------------------------------------------------------
+
 //Shader test
 //Reads shader code (from third argument in command line. If empty, skips this part)
 if (process.argv[3] != null) {
@@ -105,26 +111,40 @@ if (process.argv[3] != null) {
 
     });
 }
+//END Shader test
 
 //Buffer allocation (maybe add position checking)
 if (bufferList.length > 0 && bindingBuffers.length > 0) {
-    for(var i = 0; i<bindingBuffers.length; i++) {
-        if(bufferList.indexOf(bindingBuffers[i]) == -1)
-            console.log("The buffer '"+bindingBuffers[i]+"' may not have been created.");
+    for (var i = 0; i < bindingBuffers.length; i++) {
+        if (bufferList.indexOf(bindingBuffers[i]) == -1)
+            console.log("The buffer '" + bindingBuffers[i] + "' may not have been created.");
     }
     //console.log(bindingBuffers);
 }
+if (framebufferList.length > 0 && bindingFramebuffers.length > 0) {
+    for (var i = 0; i < bindingFramebuffers.length; i++) {
+        if (framebufferList.indexOf(bindingFramebuffers[i]) == -1)
+            console.log("The buffer '" + bindingFramebuffers[i] + "' may not have been created.");
+    }
+    //console.log(bindingBuffers);
+}
+//END BUFFER ALLOCATION
 
+//Uniform Binding Check
 if (uniformArgList.length > 0 && bindingUniforms.length > 0) {
-	for(var i = 0; i < bindingUniforms.length; i++) {
-		if(uniformArgList.indexOf(bindingUniforms[i]) == -1)
-			console.log("The uniform '"+bindingUniforms[i]+"' may not be of type uniform or may not have been created.");
-	}
+    for (var i = 0; i < bindingUniforms.length; i++) {
+        if (uniformArgList.indexOf(bindingUniforms[i]) == -1)
+            console.log("The uniform '" + bindingUniforms[i] + "' may not be of type uniform or may not have been created.");
+    }
     //console.log(bindingUniforms);
 }
+//END BINDING CHECK
 
+//------------------------END OF TESTS----------------------------------------- 
+//***********
+//***********
+//-----------------------------------------------------------------------------
 
-//End tests----------------------------------------------
 //Estraverse enter function
 
 function enter(node) {
@@ -137,14 +157,23 @@ function enter(node) {
     }
     //Collects declared buffers in an array
     if (node.type === 'ExpressionStatement' && node.expression.type == 'AssignmentExpression') {
+        //Collects declared identifiers for second pass
         if (node.expression.right != null && node.expression.right.callee != null && node.expression.right.callee.property != null) {
+
             if (node.expression.right.callee.property.name == 'createBuffer') {
                 if (node.expression.left.name != null)
                     bufferList.push(node.expression.left.name);
                 if (node.expression.left.object != null)
                     bufferList.push(node.expression.left.object.name);
+
             }
-            else if (node.expression.right.callee.property.name == 'getUniformLocation') {
+            if (node.expression.right.callee.property.name == 'createFramebuffer') {
+                if (node.expression.left.name != null)
+                    framebufferList.push(node.expression.left.name);
+                if (node.expression.left.object != null)
+                    framebufferList.push(node.expression.left.object.name);
+
+            } else if (node.expression.right.callee.property.name == 'getUniformLocation') {
                 if (node.expression.left.name != null)
                     uniformArgList.push(node.expression.left.name);
                 if (node.expression.left.object != null)
@@ -211,70 +240,70 @@ function analyzeArgs(node, args) {
     if (functionName == "bindBuffer") {
         if (args.length != 2)
             error(29, node);
+        else if (args[0].property == null)
+            error(404, node);
         else if (bufferTypes.indexOf(args[0].property.name) == -1 || (args[1].type != "Identifier" && (args[1].type != "MemberExpression")))
             error(32, node);
-        else if (args[1].object!=null){
+        else if (args[1].object != null) {
             bindingBuffers.push(args[1].object.name);
-        }
-        else{
+        } else {
             bindingBuffers.push(args[1].name);
         }
     }
     //createFrameBuffer
     if (functionName == "createFramebuffer") {
         if (args.length != 0)
-            error(3);
+            error(3, node);
     }
     //bindFrameBuffer
     if (functionName == "bindFramebuffer") {
         if (args.length != 2)
             error(29, node)
+        else if (args[0].property == null)
+            error(404, node);
         else if (args[0].property.name != "FRAMEBUFFER" || (args[1].type != "Identifier"))
-            error(4);
+            error(4, node);
+        else if (args[1].object != null) {
+            bindingFramebuffers.push(args[1].object.name);
+        } else {
+            bindingFramebuffers.push(args[1].name);
+        }
+
     }
     //bindTexture
     if (functionName == "bindTexture") {
         if (args.length != 2)
             error(29, node)
         else if ((args[0].property.name != "TEXTURE_2D" && args[0].property.name != "TEXTURE_CUBE_MAP") || (args[1].type != "Identifier" && args[1].type != "Literal"))
-            error(5);
+            error(5, node);
     }
     //texParameteri (too many symbols to check for in arg[2], so ignoring)
     if (functionName == "texParameteri") {
         if ((args[0].type != "MemberExpression") || (args[1].type != "MemberExpression") || (args[2].type != "MemberExpression")) {
-            error(30);
-        } else if ((args[0].property.name != "TEXTURE_2D" && args[0].property.name != "TEXTURE_CUBE_MAP") || texTypes.indexOf(args[1].property.name) == -1)
-            error(6);
+            error(30, node);
+
+        } else if (args[0].property == null)
+            error(404, node);
+        else if ((args[0].property.name != "TEXTURE_2D" && args[0].property.name != "TEXTURE_CUBE_MAP") || texTypes.indexOf(args[1].property.name) == -1)
+            error(6, node);
     }
     //texImage2D
     if (functionName == "texImage2D") {
         if (args.length < 6)
             error(29, node)
-            //Too far an overestimation
-            // if ((texTargets.indexOf(args[0].property.name) == -1) ||
-            //     (args[1].type != "Literal" && args[1].type != "Identifier") ||
-            //     (internalFormats.indexOf(args[2].property.name) == -1) ||
-            //     (args[3].type != "Literal" && args[3].type != "Identifier") ||
-            //     (args[4].type != "Literal" && args[4].type != "Identifier") ||
-            //     (args[5].type != "Literal" && args[5].type != "Identifier") ||
-            //     (internalFormats.indexOf(args[6].property.name) == -1) ||
-            //     (byteTypes.indexOf(args[7].property.name) == -1) ||
-            //     (args[8].type != "Literal" && args[8].type != "Identifier"))
-            //   error(7);
     }
     //createRenderbuffer
     if (functionName == "createRenderbuffer") {
         if (args.length != 0)
-            error(8);
+            error(8, node);
     }
-
-    //Begin Cody Errors
+    //Uniform input functions
     if (functionName == "uniform1f" || functionName == "uniform1i") {
         if (args.length != 2)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
-            error(21);
-        else if (args[1].object!=null)
+            error(21, node);
+        else if (args[1].object != null)
             bindingUniforms.push(args[0].object.name);
         else
             bindingUniforms.push(args[0].name);
@@ -283,8 +312,8 @@ function analyzeArgs(node, args) {
         if (args.length != 3)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
-            error(21);
-        else if (args[1].object!=null)
+            error(21, node);
+        else if (args[1].object != null)
             bindingUniforms.push(args[0].object.name);
         else
             bindingUniforms.push(args[0].name);
@@ -293,14 +322,14 @@ function analyzeArgs(node, args) {
         if (args.length != 4)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
-            error(21);
+            error(21, node);
     }
     if (functionName == "uniform4f" || functionName == "uniform4i") {
         if (args.length != 5)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
-            error(21);
-        else if (args[0].object!=null) 
+            error(21, node);
+        else if (args[0].object != null)
             bindingUniforms.push(args[0].object.name);
         else
             bindingUniforms.push(args[0].name);
@@ -310,9 +339,9 @@ function analyzeArgs(node, args) {
     if (functionName == "uniform1fv" || functionName == "uniform1iv") {
         if (args.length != 2)
             error(29, node);
-        else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier")) 
-            error(21);
-        else if (args[0].object!=null) 
+        else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
+            error(21, node);
+        else if (args[0].object != null)
             bindingUniforms.push(args[0].object.name);
         else
             bindingUniforms.push(args[0].name);
@@ -321,8 +350,8 @@ function analyzeArgs(node, args) {
         if (args.length != 2)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
-            error(21);
-        else if (args[0].object!=null) 
+            error(21, node);
+        else if (args[0].object != null)
             bindingUniforms.push(args[0].object.name);
         else
             bindingUniforms.push(args[0].name);
@@ -331,8 +360,8 @@ function analyzeArgs(node, args) {
         if (args.length != 2)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
-            error(21);
-        else if (args[0].object!=null) 
+            error(21, node);
+        else if (args[0].object != null)
             bindingUniforms.push(args[0].object.name);
         else
             bindingUniforms.push(args[0].name);
@@ -341,8 +370,8 @@ function analyzeArgs(node, args) {
         if (args.length != 2)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
-            error(21);
-        else if (args[0].object!=null) 
+            error(21, node);
+        else if (args[0].object != null)
             bindingUniforms.push(args[0].object.name);
         else
             bindingUniforms.push(args[0].name);
@@ -351,31 +380,31 @@ function analyzeArgs(node, args) {
     if (functionName == "vertexAttrib1f") {
         if (args.length < 2 || args.length > 4)
             error(29, node);
-        else if (args[0].type != "Literal" && args[0].type != "Identifier") 
-            error(21);
+        else if (args[0].type != "Literal" && args[0].type != "Identifier")
+            error(21, node);
     }
     if (functionName == "vertexAttrib2f") {
         if (args.length < 2 || args.length > 4)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier" && args[0].type != "MemberExpression") || (args[1].type != "Literal" && args[1].type != "Identifier" && args[1].type != "MemberExpression"))
-            error(21);
+            error(21, node);
     }
     if (functionName == "vertexAttrib3f") {
         if (args.length < 2 || args.length > 4)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier" && args[0].type != "MemberExpression") || (args[1].type != "Literal" && args[1].type != "Identifier" && args[1].type != "MemberExpression"))
-            error(21);
+            error(21, node);
     }
     if (functionName == "vertexAttrib4f") {
         if (args.length < 2 || args.length > 4)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier" && args[0].type != "MemberExpression") || (args[1].type != "Literal" && args[1].type != "Identifier" && args[1].type != "MemberExpression"))
-            error(21);
+            error(21, node);
     }
     //Vertex Attrib Pointer-3 args: uint, int, enum, bool, long, long
     if (functionName == "vertexAttribPointer") {
         if ((args[0].type != "Literal" && args[0].type != "Identifier" && args[0].type != "MemberExpression") || (args[1].type != "Literal" && args[1].type != "Identifier" && args[1].type != "MemberExpression"))
-            error(22);
+            error(22, node);
     }
 
     //Enable Vertex Attrib Array-1 arg uint
@@ -383,7 +412,7 @@ function analyzeArgs(node, args) {
         if (args.length != 1)
             error(29, node)
         else if (args[0].type != "Identifier" && args[0].type != "Literal" && args[0].type != "MemberExpression")
-            error(23);
+            error(23, node);
     }
 
 
@@ -392,7 +421,7 @@ function analyzeArgs(node, args) {
         if (args.length != 1)
             error(29, node)
         else if (args[0].type != "Identifier" && args[0].type != "Literal" && args[0].type != "MemberExpression")
-            error(24);
+            error(24, node);
     }
 
 
@@ -401,7 +430,7 @@ function analyzeArgs(node, args) {
         if (args.length != 1)
             error(29, node)
         else if ((args[0].property.name != "TEXTURE0" && args[0].property.name != "TEXTURE1" && args[0].property.name != "TEXTURE2" && args[0].property.name != "TEXTURE3" && args[0].property.name != "TEXTURE4" && args[0].property.name != "TEXTURE5" && args[0].property.name != "TEXTURE6" && args[0].property.name != "TEXTURE7"))
-            error(25);
+            error(25, node);
     }
 
     //Draw Arrays-void drawArrays(enum mode, int first, long count)
@@ -409,24 +438,25 @@ function analyzeArgs(node, args) {
         if (args.length != 3)
             error(29, node)
         else if ((args[0].property.name != "LINE_STRIP" && args[0].property.name != "LINES" && args[0].property.name != "POINTS" && args[0].property.name != "TRIANGLE_STRIP" && args[0].property.name != "TRIANGLES") || (args[1].type != "Identifier" && args[1].type != "Literal") || (args[2].type != "Identifier" && args[2].type != "Literal"))
-            error(26);
+            error(26, node);
     }
     //Use Program - void useProgram(Object program)
     if (functionName == "useProgram") {
         if (args.length != 1)
             error(29, node)
         else if (args[0].type != "Identifier" && args[0].name != null)
-            error(27);
+            error(27, node);
     }
     //Get Attrib Location-ulong getAttribLocation(Object program, string name)
     if (functionName == "getAttribLocation") {
         if (args.length != 2)
             error(29, node)
         else if (args[0].type != "Identifier" || (args[1].type != "Identifier" && args[1].type != "Literal"))
-            error(28);
+            error(28, node);
         else
             attribList.push(args[1].value);
     }
+    //uniformMatrix4fv
     if (functionName == "uniformMatrix4fv") {
         if (args.length != 3) {
             error(108, node);
@@ -438,6 +468,7 @@ function analyzeArgs(node, args) {
         else if (args[2].type != "Identifier" && args[2].type != "MemberExpression")
             error(111, node);
     }
+    //getUniformLocation
     if (functionName == "getUniformLocation") {
         if (args.length != 2)
             error(103, node);
@@ -449,6 +480,7 @@ function analyzeArgs(node, args) {
             uniformList.push(args[1].value);
 
     }
+    //pixelStorei
     if (functionName == "pixelStorei") {
         if (args.length != 2)
             error(104, node);
@@ -471,6 +503,7 @@ function analyzeArgs(node, args) {
                 error(106, node);
         }
     }
+    //generateMipmap
     if (functionName == "generateMipmap") {
         if (args.length != 1)
             error(107, node);
@@ -485,6 +518,7 @@ function analyzeArgs(node, args) {
             }
         }
     }
+    //viewport
     if (functionName == "viewport") {
         if (args.length != 4) {
             error(118, node);
@@ -498,6 +532,7 @@ function analyzeArgs(node, args) {
         else if (args[3].type != "Literal")
             error(122, node);
     }
+    //shaderSource
     if (functionName == "shaderSource") {
         if (args.length != 2) {
             error(123, node);
@@ -507,6 +542,7 @@ function analyzeArgs(node, args) {
         else if (args[1].type != "Literal")
             error(125, node);
     }
+    //compileShader
     if (functionName == "compileShader") {
         if (args.length != 1) {
             error(126, node);
@@ -514,6 +550,7 @@ function analyzeArgs(node, args) {
         } else if (args[0].type != "Identifier")
             error(127, node);
     }
+    //attachShader
     if (functionName == "attachShader") {
         if (args.length != 2) {
             error(128, node);
@@ -523,6 +560,7 @@ function analyzeArgs(node, args) {
         else if (args[1].type != "Identifier")
             error(130, node);
     }
+    //linkProgram
     if (functionName == "linkProgram") {
         if (args.length != 1) {
             error(131, node);
@@ -530,6 +568,7 @@ function analyzeArgs(node, args) {
         } else if (args[0].type != "Identifier")
             error(132, node);
     }
+    //linkProgram
     if (functionName == "createProgram") {
         if (args.length != 0 && args.length != 3)
             error(100, node);
@@ -610,6 +649,9 @@ function error(err, node) {
             break;
         case 32:
             reason = ("Buffer not bound correctly. Invalid arguments.");
+            break;
+        case 404:
+            reason = ("Must use GL constant. Invalid arguments.");
             break
             //Catches all generic arg errors
         default:
@@ -619,9 +661,7 @@ function error(err, node) {
 
     }
 
-    //TODO: TT 4/8/14 right now this doesn't give human-readable output to the "evidence" variable; we may need to find a better hack for getting the actual text of the program
     evidence = JSON.stringify(node);
-    //TODO: TT 4/8/14 construct the Error object and push it onto gErrors
     errorToPush = new Error(location, reason, evidence);
     gErrors.push(errorToPush);
 }
