@@ -11,6 +11,8 @@ var attribList = [];
 var gErrors = [];
 var bufferList = [];
 var bindingBuffers = [];
+var uniformArgList = [];
+var bindingUniforms = [];
 
 /* Error object. These can be stored in an array to output in a console, webpage, or whatever.
  Errors are simply pushed onto an array as the analysis procedes, an idea borrowed from JSLint/JSHint.
@@ -86,10 +88,7 @@ if (process.argv[3] != null) {
         }
 
         //Set variables here to grab the types we need
-        var attrcount = data.match(/attribute/g);
-
-        var attribListGLSL = [];
-        for (var i = 0; i < uniformList.length; i++) {
+        for (var i = 0; i < attribList.length; i++) {
             var attribName = new RegExp(attribList[i]);
             var attribcount = data.match(attribName);
             if (attribcount == null)
@@ -97,7 +96,6 @@ if (process.argv[3] != null) {
         }
 
         //Uniform type checking
-        var uniformListGLSL = [];
         for (var i = 0; i < uniformList.length; i++) {
             var uniformName = new RegExp(uniformList[i]);
             var uniformcount = data.match(uniformName);
@@ -110,11 +108,19 @@ if (process.argv[3] != null) {
 
 //Buffer allocation (maybe add position checking)
 if (bufferList.length > 0 && bindingBuffers.length > 0) {
-    for(var i = 0; i<bindingBuffers.length; i++){
-        //console.log(bufferList.indexOf(bindingBuffers[i]));
+    for(var i = 0; i<bindingBuffers.length; i++) {
         if(bufferList.indexOf(bindingBuffers[i]) == -1)
-            console.log("The buffer '"+bindingBuffers[i]+"'' may not have been created. ");
+            console.log("The buffer '"+bindingBuffers[i]+"' may not have been created.");
     }
+    //console.log(bindingBuffers);
+}
+
+if (uniformArgList.length > 0 && bindingUniforms.length > 0) {
+	for(var i = 0; i < bindingUniforms.length; i++) {
+		if(uniformArgList.indexOf(bindingUniforms[i]) == -1)
+			console.log("The uniform '"+bindingUniforms[i]+"' may not be of type uniform or may not have been created.");
+	}
+    //console.log(bindingUniforms);
 }
 
 
@@ -137,6 +143,12 @@ function enter(node) {
                     bufferList.push(node.expression.left.name);
                 if (node.expression.left.object != null)
                     bufferList.push(node.expression.left.object.name);
+            }
+            else if (node.expression.right.callee.property.name == 'getUniformLocation') {
+                if (node.expression.left.name != null)
+                    uniformArgList.push(node.expression.left.name);
+                if (node.expression.left.object != null)
+                    uniformArgList.push(node.expression.left.object.name);
             }
         }
     }
@@ -258,65 +270,89 @@ function analyzeArgs(node, args) {
 
     //Begin Cody Errors
     if (functionName == "uniform1f" || functionName == "uniform1i") {
-        if (args.length < 2 || args.length > 4) {
-            error(29, node);
-        } else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier")) {
-            error(21);
-        }
-    }
-    if (functionName == "uniform2f" || functionName == "uniform2i") {
-        if (args.length < 2 || args.length > 4)
+        if (args.length != 2)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21);
+        else if (args[1].object!=null)
+            bindingUniforms.push(args[0].object.name);
+        else
+            bindingUniforms.push(args[0].name);
+    }
+    if (functionName == "uniform2f" || functionName == "uniform2i") {
+        if (args.length != 3)
+            error(29, node);
+        else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
+            error(21);
+        else if (args[1].object!=null)
+            bindingUniforms.push(args[0].object.name);
+        else
+            bindingUniforms.push(args[0].name);
     }
     if (functionName == "uniform3f" || functionName == "uniform3i") {
-        if (args.length < 2 || args.length > 4)
+        if (args.length != 4)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21);
     }
     if (functionName == "uniform4f" || functionName == "uniform4i") {
-        if (args.length < 2 || args.length > 4)
+        if (args.length != 5)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21);
+        else if (args[0].object!=null) 
+            bindingUniforms.push(args[0].object.name);
+        else
+            bindingUniforms.push(args[0].name);
     }
 
     //Uniform - 2 args: uint, array void uniform[1234][fi]v(uint location, Array value)
     if (functionName == "uniform1fv" || functionName == "uniform1iv") {
-        if (args.length < 2 || args.length > 4) {
+        if (args.length != 2)
             error(29, node);
-        } else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier")) {
+        else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier")) 
             error(21);
-        }
+        else if (args[0].object!=null) 
+            bindingUniforms.push(args[0].object.name);
+        else
+            bindingUniforms.push(args[0].name);
     }
     if (functionName == "uniform2fv" || functionName == "uniform2iv") {
-        if (args.length < 2 || args.length > 4)
+        if (args.length != 2)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21);
+        else if (args[0].object!=null) 
+            bindingUniforms.push(args[0].object.name);
+        else
+            bindingUniforms.push(args[0].name);
     }
     if (functionName == "uniform3fv" || functionName == "uniform3iv") {
-        if (args.length < 2 || args.length > 4)
+        if (args.length != 2)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21);
+        else if (args[0].object!=null) 
+            bindingUniforms.push(args[0].object.name);
+        else
+            bindingUniforms.push(args[0].name);
     }
     if (functionName == "uniform4fv" || functionName == "uniform4iv") {
-        if (args.length < 2 || args.length > 4)
+        if (args.length != 2)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21);
-
+        else if (args[0].object!=null) 
+            bindingUniforms.push(args[0].object.name);
+        else
+            bindingUniforms.push(args[0].name);
     }
     //Vertex Attrib 3 F- multiple, maybe add fv
     if (functionName == "vertexAttrib1f") {
-        if (args.length < 2 || args.length > 4) {
+        if (args.length < 2 || args.length > 4)
             error(29, node);
-        } else if (args[0].type != "Literal" && args[0].type != "Identifier") {
+        else if (args[0].type != "Literal" && args[0].type != "Identifier") 
             error(21);
-        }
     }
     if (functionName == "vertexAttrib2f") {
         if (args.length < 2 || args.length > 4)
