@@ -1,9 +1,0 @@
-
-uniform vec2 i2;
-uniform vec3 i3;
-uniform vec4 i4;
-
-uniform vec1 f1;
-uniform vec2 f2;
-uniform vec3 f3;
-uniform vec4 f4;
