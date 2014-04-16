@@ -16,6 +16,12 @@ var bindingFramebuffers = [];
 var uniformArgList = [];
 var bindingUniforms = [];
 
+/*
+Left TODO:
+1. Take lists of uniforms and make sure they are right type (if uniform3__ it should be a vec3, etc)
+2. Combine errors and make them better in their reason output
+*/
+
 /* Error object. These can be stored in an array to output in a console, webpage, or whatever.
  Errors are simply pushed onto an array as the analysis procedes, an idea borrowed from JSLint/JSHint.
 
@@ -94,19 +100,19 @@ if (process.argv[3] != null) {
         }
 
         //Set variables here to grab the types we need
-        for (var i = 0; i < attribList.length; i++) {
+        for (var i = 0; i < attribList.length; i+=2) {
             var attribName = new RegExp(attribList[i]);
             var attribcount = data.match(attribName);
             if (attribcount == null)
-                console.log("The attribute '" + attribList[i] + "'" + " isn't declared in the shader code");
+                console.log(attribList[i+1] + ". The attribute '" + attribList[i] + "'" + " isn't declared in the shader code");
         }
 
         //Uniform type checking
-        for (var i = 0; i < uniformList.length; i++) {
+        for (var i = 0; i < uniformList.length; i+=2) {
             var uniformName = new RegExp(uniformList[i]);
             var uniformcount = data.match(uniformName);
             if (uniformcount == null)
-                console.log("The uniform '" + uniformList[i] + "'" + " isn't declared in the shader code");
+                console.log(uniformList[i+1] + ". The uniform '" + uniformList[i] + "'" + " isn't declared in the shader code");
         }
 
     });
@@ -115,16 +121,16 @@ if (process.argv[3] != null) {
 
 //Buffer allocation (maybe add position checking)
 if (bufferList.length > 0 && bindingBuffers.length > 0) {
-    for (var i = 0; i < bindingBuffers.length; i++) {
+    for (var i = 0; i < bindingBuffers.length; i += 2) {
         if (bufferList.indexOf(bindingBuffers[i]) == -1)
-            console.log("The buffer '" + bindingBuffers[i] + "' may not have been created.");
+            console.log(bindingUniforms[i + 1] + ". The buffer '" + bindingBuffers[i] + "' may not have been created.");
     }
     //console.log(bindingBuffers);
 }
 if (framebufferList.length > 0 && bindingFramebuffers.length > 0) {
-    for (var i = 0; i < bindingFramebuffers.length; i++) {
+    for (var i = 0; i < bindingFramebuffers.length; i += 2) {
         if (framebufferList.indexOf(bindingFramebuffers[i]) == -1)
-            console.log("The buffer '" + bindingFramebuffers[i] + "' may not have been created.");
+            console.log(bindingUniforms[i + 1] + ". The buffer '" + bindingFramebuffers[i] + "' may not have been created.");
     }
     //console.log(bindingBuffers);
 }
@@ -132,9 +138,9 @@ if (framebufferList.length > 0 && bindingFramebuffers.length > 0) {
 
 //Uniform Binding Check
 if (uniformArgList.length > 0 && bindingUniforms.length > 0) {
-    for (var i = 0; i < bindingUniforms.length; i++) {
+    for (var i = 0; i < bindingUniforms.length; i += 2) {
         if (uniformArgList.indexOf(bindingUniforms[i]) == -1)
-            console.log("The uniform '" + bindingUniforms[i] + "' may not be of type uniform or may not have been created.");
+            console.log(bindingUniforms[i + 1] + ". The uniform '" + bindingUniforms[i] + "' may not be of type uniform or may not have been created.");
     }
     //console.log(bindingUniforms);
 }
@@ -246,8 +252,10 @@ function analyzeArgs(node, args) {
             error(32, node);
         else if (args[1].object != null) {
             bindingBuffers.push(args[1].object.name);
+            bindingBuffers.push(node.loc.start.line);
         } else {
             bindingBuffers.push(args[1].name);
+            bindingBuffers.push(node.loc.start.line);
         }
     }
     //createFrameBuffer
@@ -265,8 +273,10 @@ function analyzeArgs(node, args) {
             error(4, node);
         else if (args[1].object != null) {
             bindingFramebuffers.push(args[1].object.name);
+            bindingFramebuffers.push(node.loc.start.line);
         } else {
             bindingFramebuffers.push(args[1].name);
+            bindingFramebuffers.push(node.loc.start.line);
         }
 
     }
@@ -303,36 +313,52 @@ function analyzeArgs(node, args) {
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21, node);
-        else if (args[1].object != null)
+        else if (args[0].object != null) {
             bindingUniforms.push(args[0].object.name);
-        else
+            bindingUniforms.push(node.loc.start.line);
+        } else {
             bindingUniforms.push(args[0].name);
+            bindingUniforms.push(node.loc.start.line);
+        }
     }
     if (functionName == "uniform2f" || functionName == "uniform2i") {
         if (args.length != 3)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21, node);
-        else if (args[1].object != null)
+        else if (args[0].object != null) {
             bindingUniforms.push(args[0].object.name);
-        else
+            bindingUniforms.push(node.loc.start.line);
+        } else {
             bindingUniforms.push(args[0].name);
+            bindingUniforms.push(node.loc.start.line);
+        }
     }
     if (functionName == "uniform3f" || functionName == "uniform3i") {
         if (args.length != 4)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21, node);
+        else if (args[0].object != null) {
+            bindingUniforms.push(args[0].object.name);
+            bindingUniforms.push(node.loc.start.line);
+        } else {
+            bindingUniforms.push(args[0].name);
+            bindingUniforms.push(node.loc.start.line);
+        }
     }
     if (functionName == "uniform4f" || functionName == "uniform4i") {
         if (args.length != 5)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21, node);
-        else if (args[0].object != null)
+        else if (args[0].object != null) {
             bindingUniforms.push(args[0].object.name);
-        else
+            bindingUniforms.push(node.loc.start.line);
+        } else {
             bindingUniforms.push(args[0].name);
+            bindingUniforms.push(node.loc.start.line);
+        }
     }
 
     //Uniform - 2 args: uint, array void uniform[1234][fi]v(uint location, Array value)
@@ -341,40 +367,52 @@ function analyzeArgs(node, args) {
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21, node);
-        else if (args[0].object != null)
+        else if (args[0].object != null) {
             bindingUniforms.push(args[0].object.name);
-        else
+            bindingUniforms.push(node.loc.start.line);
+        } else {
             bindingUniforms.push(args[0].name);
+            bindingUniforms.push(node.loc.start.line);
+        }
     }
     if (functionName == "uniform2fv" || functionName == "uniform2iv") {
         if (args.length != 2)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21, node);
-        else if (args[0].object != null)
+        else if (args[0].object != null) {
             bindingUniforms.push(args[0].object.name);
-        else
+            bindingUniforms.push(node.loc.start.line);
+        } else {
             bindingUniforms.push(args[0].name);
+            bindingUniforms.push(node.loc.start.line);
+        }
     }
     if (functionName == "uniform3fv" || functionName == "uniform3iv") {
         if (args.length != 2)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21, node);
-        else if (args[0].object != null)
+        else if (args[0].object != null) {
             bindingUniforms.push(args[0].object.name);
-        else
+            bindingUniforms.push(node.loc.start.line);
+        } else {
             bindingUniforms.push(args[0].name);
+            bindingUniforms.push(node.loc.start.line);
+        }
     }
     if (functionName == "uniform4fv" || functionName == "uniform4iv") {
         if (args.length != 2)
             error(29, node);
         else if ((args[0].type != "Literal" && args[0].type != "Identifier") || (args[1].type != "Literal" && args[1].type != "Identifier"))
             error(21, node);
-        else if (args[0].object != null)
+        else if (args[0].object != null) {
             bindingUniforms.push(args[0].object.name);
-        else
+            bindingUniforms.push(node.loc.start.line);
+        } else {
             bindingUniforms.push(args[0].name);
+            bindingUniforms.push(node.loc.start.line);
+        }
     }
     //Vertex Attrib 3 F- multiple, maybe add fv
     if (functionName == "vertexAttrib1f") {
@@ -453,8 +491,10 @@ function analyzeArgs(node, args) {
             error(29, node)
         else if (args[0].type != "Identifier" || (args[1].type != "Identifier" && args[1].type != "Literal"))
             error(28, node);
-        else
+        else{
             attribList.push(args[1].value);
+            attribList.push(node.loc.start.line);
+        }
     }
     //uniformMatrix4fv
     if (functionName == "uniformMatrix4fv") {
@@ -476,8 +516,14 @@ function analyzeArgs(node, args) {
             error(101, node);
         else if (args[1].type != "Literal")
             error(102, node);
-        else
+        else {
             uniformList.push(args[1].value);
+            uniformList.push(node.loc.start.line);
+            // if (process.argv[3] != null) {
+            //     var temp_type = getType(args[1].value);
+            //     uniformList.push(temp_type);
+            // }
+        }
 
     }
     //pixelStorei
@@ -665,3 +711,20 @@ function error(err, node) {
     errorToPush = new Error(location, reason, evidence);
     gErrors.push(errorToPush);
 }
+
+// //Helper function
+
+// function getType(value) {
+//     fs.readFile(process.argv[3], 'utf8', function(err, data) {
+//         if (err) {
+//             return "Your shader code wasnt found. ERROR: " + console.log(err);
+//         }
+//         var res = data.split(" ");
+//         for (var i = 0; i < res.length; i++) {
+//             res[i] = res[i].trim();
+//             res[i] = res[i].split(";",1)[0];
+//         }
+//         var temp = res.indexOf(value);
+//         return res[temp-1];
+//     });
+// }

@@ -23,7 +23,7 @@ function main(){
 	floatLoc = gl.getUniformLocation(program, "scale");
 	a_Position = gl.getAttribLocation(program, 'position');
 	frame = gl.createFramebuffer();
-	gl.bindFramebuffer(program, frame);
+	gl.bindFramebuffer(GL.FRAMEBUFFER, frame);
 	buff = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, buff);
 	gl.uniform1i(intLoc, 1);
