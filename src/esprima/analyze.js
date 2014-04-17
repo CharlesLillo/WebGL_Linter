@@ -86,7 +86,7 @@ estraverse.traverse(ast, {
 });
 
 
-//------------------------Tests that occur after first pass-------------------- 
+//------------------------Tests that occur after first pass--------------------
 //***********
 //***********
 //-----------------------------------------------------------------------------
@@ -146,7 +146,7 @@ if (uniformArgList.length > 0 && bindingUniforms.length > 0) {
 }
 //END BINDING CHECK
 
-//------------------------END OF TESTS----------------------------------------- 
+//------------------------END OF TESTS-----------------------------------------
 //***********
 //***********
 //-----------------------------------------------------------------------------
@@ -472,11 +472,16 @@ function analyzeArgs(node, args) {
     }
 
     //Draw Arrays-void drawArrays(enum mode, int first, long count)
+    //Draw Arrays-void drawArrays(enum mode, int first, long count)
     if (functionName == "drawArrays") {
         if (args.length != 3)
-            error(29, node)
-        else if ((args[0].property.name != "LINE_STRIP" && args[0].property.name != "LINES" && args[0].property.name != "POINTS" && args[0].property.name != "TRIANGLE_STRIP" && args[0].property.name != "TRIANGLES") || (args[1].type != "Identifier" && args[1].type != "Literal") || (args[2].type != "Identifier" && args[2].type != "Literal"))
-            error(26, node);
+            error(29, node);
+        else if ((args[0].property.name != "LINE_STRIP" && args[0].property.name != "LINES" && args[0].property.name != "POINTS" && args[0].property.name != "TRIANGLE_STRIP" && args[0].property.name != "TRIANGLES")){
+            error(404, node);
+        }
+        else if ((args[1].type != "Identifier" && args[1].type != "Literal") || (args[2].type != "Identifier" && args[2].type != "Literal")){
+            error(29, node);
+        }
     }
     //Use Program - void useProgram(Object program)
     if (functionName == "useProgram") {
@@ -530,17 +535,22 @@ function analyzeArgs(node, args) {
     if (functionName == "pixelStorei") {
         if (args.length != 2)
             error(104, node);
-        else {
+         else {
             switch (args[0].property.name) {
                 case "PACK_ALIGNMENT":
+                    error(404, node);
                     break;
                 case "UNPACK_ALIGNMENT":
+                    error(404, node);
                     break;
                 case "UNPACK_FLIP_Y_WEBGL":
+                    error(404, node);
                     break;
                 case "UNPACK_PREMULTIPLY_ALPHA_WEBGL":
+                    error(404, node);
                     break;
                 case "UNPACK_COLORSPACE_CONVERSION_WEBGL":
+                    error(404, node);
                     break;
                 default:
                     error(105, node);
