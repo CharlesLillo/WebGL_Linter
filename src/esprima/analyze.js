@@ -295,7 +295,7 @@ function analyzeArgs(node, args) {
         } else if (args[0].property == null)
             error(404, node);
         else if ((args[0].property.name != "TEXTURE_2D" && args[0].property.name != "TEXTURE_CUBE_MAP") || texTypes.indexOf(args[1].property.name) == -1)
-            error(6, node);
+            error(29, node);
     }
     //texImage2D
     if (functionName == "texImage2D") {
@@ -305,7 +305,7 @@ function analyzeArgs(node, args) {
     //createRenderbuffer
     if (functionName == "createRenderbuffer") {
         if (args.length != 0)
-            error(8, node);
+            error(29, node);
     }
     //Uniform input functions
     if (functionName == "uniform1f" || functionName == "uniform1i") {
@@ -442,7 +442,7 @@ function analyzeArgs(node, args) {
     //Vertex Attrib Pointer-3 args: uint, int, enum, bool, long, long
     if (functionName == "vertexAttribPointer") {
         if ((args[0].type != "Literal" && args[0].type != "Identifier" && args[0].type != "MemberExpression") || (args[1].type != "Literal" && args[1].type != "Identifier" && args[1].type != "MemberExpression"))
-            error(22, node);
+            error(29, node);
     }
 
     //Enable Vertex Attrib Array-1 arg uint
@@ -450,7 +450,7 @@ function analyzeArgs(node, args) {
         if (args.length != 1)
             error(29, node)
         else if (args[0].type != "Identifier" && args[0].type != "Literal" && args[0].type != "MemberExpression")
-            error(23, node);
+            error(29, node);
     }
 
 
@@ -459,7 +459,7 @@ function analyzeArgs(node, args) {
         if (args.length != 1)
             error(29, node)
         else if (args[0].type != "Identifier" && args[0].type != "Literal" && args[0].type != "MemberExpression")
-            error(24, node);
+            error(29, node);
     }
 
 
@@ -468,7 +468,7 @@ function analyzeArgs(node, args) {
         if (args.length != 1)
             error(29, node)
         else if ((args[0].property.name != "TEXTURE0" && args[0].property.name != "TEXTURE1" && args[0].property.name != "TEXTURE2" && args[0].property.name != "TEXTURE3" && args[0].property.name != "TEXTURE4" && args[0].property.name != "TEXTURE5" && args[0].property.name != "TEXTURE6" && args[0].property.name != "TEXTURE7"))
-            error(25, node);
+            error(29, node);
     }
 
     //Draw Arrays-void drawArrays(enum mode, int first, long count)
@@ -488,14 +488,14 @@ function analyzeArgs(node, args) {
         if (args.length != 1)
             error(29, node)
         else if (args[0].type != "Identifier" && args[0].name != null)
-            error(27, node);
+            error(29, node);
     }
     //Get Attrib Location-ulong getAttribLocation(Object program, string name)
     if (functionName == "getAttribLocation") {
         if (args.length != 2)
             error(29, node)
         else if (args[0].type != "Identifier" || (args[1].type != "Identifier" && args[1].type != "Literal"))
-            error(28, node);
+            error(29, node);
         else{
             attribList.push(args[1].value);
             attribList.push(node.loc.start.line);
@@ -658,41 +658,11 @@ function error(err, node) {
         case 5:
             reason = ("Texture not bound correctly.");
             break;
-        case 6:
-            reason = ("texParameteri has invalid arguments.");
-            break;
-        case 7:
-            reason = ("texImage2D has invalid arguments.");
-            break;
-        case 8:
-            reason = ("createRenderbuffer should not have arguments.");
-            break;
         case 20:
             reason = ("Please provide the accurate number of parameters.");
             break;
         case 21:
             reason = ("Please provide a literal or identifier for the uniform or vertexAttrib functions.");
-            break;
-        case 22:
-            reason = ("vertexAttribPointer has invalid arguments.");
-            break;
-        case 23:
-            reason = ("enableVertexAttribArray has invalid arguments.");
-            break;
-        case 24:
-            reason = ("disableVertexAttribArray has invalid arguments.");
-            break;
-        case 25:
-            reason = ("activeTexture has invalid arguments.");
-            break;
-        case 26:
-            reason = ("drawArrays has invalid arguments.");
-            break;
-        case 27:
-            reason = ("useProgram has invalid arguments.");
-            break;
-        case 28:
-            reason = ("getAttribLocation has invalid arguments.");
             break;
         case 29:
             reason = (functionName + " has an invalid or non-optimal number arguments.");
