@@ -6,42 +6,67 @@ Node.js installation on computer (preferably in PATH)
 
 The modules needed to run this linter are included in the directory under node_modules.
 
-The Zip comes with 2 very extensive test files to try the analyzer on (function syntax adheres to our linter best practice for interpretation) (test and test2).
+The Zip comes with 4 very extensive test files to try the analyzer on (function syntax adheres to our linter best practice for interpretation).
+
+test.js and test2.js are two files that show proper syntax and structure for a WebGL program (display no errors when linted).
 
 test3.js is a file with errors on the following lines (which are detected by the linter):
 
 32, 55, 376, 396, 407
 
-node [analysis file name] [file to be analyzed];
+test4.js is a file that shows our error system for our newer tests (NOTE -- FOR THIS FILE, USE THE FILE vertex.glsl AS THE THIRD ARGUMENT FOR INPUT. OTHERWISE ONLY TWO ERRORS WILL SHOW):
+
+21, 22, 28, 39
+
+node [analysis file name] [file to be analyzed][vertex shader file]**;
+** - the third argument is optional
 
 eg. node analyze.js test.js
 
+eg. node analyze.js test4.js vertex.glsl
+
 -----HOW IT WORKS AND WHAT IT DOES:
 
-This current version of the webgl parser lints basic programs for the WebGL binding on a subset of the most commonly used functions. What this linting involves is:
+This current version of the WebGL Linter ‘lints’ basic programs for the WebGL binding on a subset of the most commonly used functions. What this linting involves is:
 
 - Checking for proper number of arguments
+	--This is done by checking the lengths of function arguments against the specification
 
-- Checking for valid GL constnat types for arguments (if available)
+- Checking for valid GL constant types for arguments (if available)
+	--This is done by checking the acceptable constant types for functions against the specification
 
 - Checking for valid argument types
+	--This is done by checking the acceptable argument types for functions against the specification
+
+- Making sure buffer allocation was properly done
+	--And that any bindings made to already allocated buffers.
+	--This is handled by collecting the buffers that have been created on the first pass, as well as all the buffers that have been bound to. Then, on a second past the two lists are cross referenced to make sure they are in coherence
+
+- Checks location getting calls against vertex shader file provided, and makes sure that the locations being stored are for the right type (attributes and uniforms)
+	--eg. getAttribLocation(program, "some uniform") would be invalid
+	--This is done by scanning the vertex file for the declaration of a properly named value. The first pass of the analyzer stores all uniform/attribute location names and checks them against the vertex file definition for coherence
+
 
 -----WHAT IT PRODUCES:
 
-- An AST.JSON file as saved output of the scanned in program.
+- An AST.JSON file as saved output of the scanned in program
 
-- Console output in the form of what function MAY have an error in it according to our code. The code may still run fine - if our linter tells you an error it is hopefully to point you in the right direction of what maybe wrong in the code (not necessarily in the logic!)
+- Console output in the form of what function MAY have an error in it according to our code. The code may still run fine - if our linter tells you an error it is hopefully to point you in the right direction of what  
+maybe wrong in the code (not necessarily in the logic!)
 
-- The console output will follow the flow of the program - if an error is thrown at a certain point, all points up to it have been checked in a linear scanning fashion.
+- The console output will follow the flow of the program - if an error is thrown at a certain point, all points up to it have been checked in a linear scanning fashion
+	--Note that bindings to uniforms are checked on the second pass and may appear as though they were checked further down the program, but they are done in order
+- Line numbers to which the error was thrown
 
 -----ISSUES:
-This is a very safe overapproximation of a lot of functions. For best results, adhere to the following standard for our linter:
+This is a very safe over-approximation of a lot of functions. For best results, adhere to the following standard for our linter:
 	
-	- Use Literals and Identifiers that point to functional or logical output in function arguements
+	- Use Literals and Identifiers that point to functional or logical output in function arguments
 	- The ternary ? operator is not supported for function calls. 
-	- In some functions where function call outs are not common as an arguement, the function evaluation may cause an error (map to identifier).
-	- If a node error arises where it cannot finishing parsing, that means node wasn't able to detect a certain property of a linting evaluation (which could also be a source of your error! In that case, the best thing to do is refer to the line number it crashed on and refer to the analyze.js functions that is). Please refer to the first issue to prevent this in most cases.
-	- This linter is meant for starting WebGL programs! It's purpose is to help the programmmer figure out if their programs logic or simply a misplaced constant is the error, and is best used to that end.
+	- In some functions where function call outs are not common as an argument, the function evaluation may cause an error (map to identifier).
+	- If a node error arises where it cannot finishing parsing, that means node wasn't able to detect a certain property of a linting evaluation (which could also be a source of your error! In that case, the best  
+thing to do is refer to the line number it crashed on and refer to the analyze.js functions that is). Please refer to the first issue to prevent this in most cases
+	- This linter is meant for starting WebGL programs! Its purpose is to help the programmer figure out if their programs logic or simply a misplaced constant is the error, and is best used to that end
 
 Thanks!
 

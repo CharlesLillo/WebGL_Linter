@@ -16,12 +16,6 @@ var bindingFramebuffers = [];
 var uniformArgList = [];
 var bindingUniforms = [];
 
-/*
-Left TODO:
-1. Take lists of uniforms and make sure they are right type (if uniform3__ it should be a vec3, etc)
-2. Combine errors and make them better in their reason output
-*/
-
 /* Error object. These can be stored in an array to output in a console, webpage, or whatever.
  Errors are simply pushed onto an array as the analysis procedes, an idea borrowed from JSLint/JSHint.
 
@@ -55,7 +49,6 @@ function Error(location, reason, evidence) {
 var ast = esprima.parse(fs.readFileSync(filename), {
     loc: true
 });
-//var ast = esprima.parse(fs.readFileSync(filename), {tokens: true});
 
 //Writes AST to a file called AST.json
 var tree = JSON.stringify(ast, null, 4);
@@ -100,39 +93,37 @@ if (process.argv[3] != null) {
         }
 
         //Set variables here to grab the types we need
-        for (var i = 0; i < attribList.length; i+=2) {
+        for (var i = 0; i < attribList.length; i += 2) {
             var attribName = new RegExp(attribList[i]);
             var attribcount = data.match(attribName);
             if (attribcount == null)
-                console.log(attribList[i+1] + ". The attribute '" + attribList[i] + "'" + " isn't declared in the shader code");
+                console.log(attribList[i + 1] + ". The attribute '" + attribList[i] + "'" + " isn't declared in the shader code");
         }
 
         //Uniform type checking
-        for (var i = 0; i < uniformList.length; i+=2) {
+        for (var i = 0; i < uniformList.length; i += 2) {
             var uniformName = new RegExp(uniformList[i]);
             var uniformcount = data.match(uniformName);
             if (uniformcount == null)
-                console.log(uniformList[i+1] + ". The uniform '" + uniformList[i] + "'" + " isn't declared in the shader code");
+                console.log(uniformList[i + 1] + ". The uniform '" + uniformList[i] + "'" + " isn't declared in the shader code");
         }
 
     });
 }
 //END Shader test
 
-//Buffer allocation (maybe add position checking)
+//Buffer allocation
 if (bufferList.length > 0 && bindingBuffers.length > 0) {
     for (var i = 0; i < bindingBuffers.length; i += 2) {
         if (bufferList.indexOf(bindingBuffers[i]) == -1)
             console.log(bindingUniforms[i + 1] + ". The buffer '" + bindingBuffers[i] + "' may not have been created.");
     }
-    //console.log(bindingBuffers);
 }
 if (framebufferList.length > 0 && bindingFramebuffers.length > 0) {
     for (var i = 0; i < bindingFramebuffers.length; i += 2) {
         if (framebufferList.indexOf(bindingFramebuffers[i]) == -1)
             console.log(bindingUniforms[i + 1] + ". The buffer '" + bindingFramebuffers[i] + "' may not have been created.");
     }
-    //console.log(bindingBuffers);
 }
 //END BUFFER ALLOCATION
 
@@ -141,8 +132,7 @@ if (uniformArgList.length > 0 && bindingUniforms.length > 0) {
     for (var i = 0; i < bindingUniforms.length; i += 2) {
         if (uniformArgList.indexOf(bindingUniforms[i]) == -1)
             console.log(bindingUniforms[i + 1] + ". The uniform '" + bindingUniforms[i] + "' may not be of type uniform or may not have been created.");
-    }
-    //console.log(bindingUniforms);
+    };
 }
 //END BINDING CHECK
 
@@ -224,7 +214,7 @@ function analyzeArgs(node, args) {
         else if (args[0].type != "Literal")
             error(1);
     }
-    //clear(needs binary experssion masking check)
+    //clear
     if (functionName == "clear") {
         if (args.length != 1)
             error(29, node)
@@ -284,10 +274,12 @@ function analyzeArgs(node, args) {
     if (functionName == "bindTexture") {
         if (args.length != 2)
             error(29, node)
+        else if (args[0].property == null)
+            error(404, node);
         else if ((args[0].property.name != "TEXTURE_2D" && args[0].property.name != "TEXTURE_CUBE_MAP") || (args[1].type != "Identifier" && args[1].type != "Literal"))
             error(5, node);
     }
-    //texParameteri (too many symbols to check for in arg[2], so ignoring)
+    //texParameteri 
     if (functionName == "texParameteri") {
         if ((args[0].type != "MemberExpression") || (args[1].type != "MemberExpression") || (args[2].type != "MemberExpression")) {
             error(30, node);
@@ -467,19 +459,21 @@ function analyzeArgs(node, args) {
     if (functionName == "activeTexture") {
         if (args.length != 1)
             error(29, node)
+        else if (args[0].property == null)
+            error(404, node);
         else if ((args[0].property.name != "TEXTURE0" && args[0].property.name != "TEXTURE1" && args[0].property.name != "TEXTURE2" && args[0].property.name != "TEXTURE3" && args[0].property.name != "TEXTURE4" && args[0].property.name != "TEXTURE5" && args[0].property.name != "TEXTURE6" && args[0].property.name != "TEXTURE7"))
             error(29, node);
     }
 
     //Draw Arrays-void drawArrays(enum mode, int first, long count)
-    //Draw Arrays-void drawArrays(enum mode, int first, long count)
     if (functionName == "drawArrays") {
         if (args.length != 3)
             error(29, node);
-        else if ((args[0].property.name != "LINE_STRIP" && args[0].property.name != "LINES" && args[0].property.name != "POINTS" && args[0].property.name != "TRIANGLE_STRIP" && args[0].property.name != "TRIANGLES")){
+        else if (args[0].property == null)
             error(404, node);
-        }
-        else if ((args[1].type != "Identifier" && args[1].type != "Literal") || (args[2].type != "Identifier" && args[2].type != "Literal")){
+        else if ((args[0].property.name != "LINE_STRIP" && args[0].property.name != "LINES" && args[0].property.name != "POINTS" && args[0].property.name != "TRIANGLE_STRIP" && args[0].property.name != "TRIANGLES")) {
+            error(404, node);
+        } else if ((args[1].type != "Identifier" && args[1].type != "Literal") || (args[2].type != "Identifier" && args[2].type != "Literal")) {
             error(29, node);
         }
     }
@@ -496,7 +490,7 @@ function analyzeArgs(node, args) {
             error(29, node)
         else if (args[0].type != "Identifier" || (args[1].type != "Identifier" && args[1].type != "Literal"))
             error(29, node);
-        else{
+        else {
             attribList.push(args[1].value);
             attribList.push(node.loc.start.line);
         }
@@ -524,10 +518,6 @@ function analyzeArgs(node, args) {
         else {
             uniformList.push(args[1].value);
             uniformList.push(node.loc.start.line);
-            // if (process.argv[3] != null) {
-            //     var temp_type = getType(args[1].value);
-            //     uniformList.push(temp_type);
-            // }
         }
 
     }
@@ -535,25 +525,23 @@ function analyzeArgs(node, args) {
     if (functionName == "pixelStorei") {
         if (args.length != 2)
             error(104, node);
-         else {
+        else if (args[0].property == null)
+            error(404, node);
+        else {
+
             switch (args[0].property.name) {
                 case "PACK_ALIGNMENT":
-                    error(404, node);
                     break;
                 case "UNPACK_ALIGNMENT":
-                    error(404, node);
                     break;
                 case "UNPACK_FLIP_Y_WEBGL":
-                    error(404, node);
                     break;
                 case "UNPACK_PREMULTIPLY_ALPHA_WEBGL":
-                    error(404, node);
                     break;
                 case "UNPACK_COLORSPACE_CONVERSION_WEBGL":
-                    error(404, node);
                     break;
                 default:
-                    error(105, node);
+                    error(404, node);
             }
             if (args[1].type != "Literal")
                 error(106, node);
@@ -563,6 +551,8 @@ function analyzeArgs(node, args) {
     if (functionName == "generateMipmap") {
         if (args.length != 1)
             error(107, node);
+        else if (args[0].property == null)
+            error(404, node);
         else {
             switch (args[0].property.name) {
                 case "TEXTURE_2D":
@@ -570,7 +560,7 @@ function analyzeArgs(node, args) {
                 case "TEXTURE_CUBE_MAP":
                     break;
                 default:
-                    error(107, node);
+                    error(404, node);
             }
         }
     }
@@ -579,13 +569,13 @@ function analyzeArgs(node, args) {
         if (args.length != 4) {
             error(118, node);
             return;
-        } else if (args[0].type != "Literal")
+        } else if (args[0].type != "Literal" && args[0].type != "Identifier")
             error(119, node);
-        else if (args[1].type != "Literal")
+        else if (args[1].type != "Literal" && args[0].type != "Identifier")
             error(120, node);
-        else if (args[2].type != "Literal")
+        else if (args[2].type != "Literal" && args[0].type != "Identifier")
             error(121, node);
-        else if (args[3].type != "Literal")
+        else if (args[3].type != "Literal" && args[0].type != "Identifier")
             error(122, node);
     }
     //shaderSource
@@ -691,20 +681,3 @@ function error(err, node) {
     errorToPush = new Error(location, reason, evidence);
     gErrors.push(errorToPush);
 }
-
-// //Helper function
-
-// function getType(value) {
-//     fs.readFile(process.argv[3], 'utf8', function(err, data) {
-//         if (err) {
-//             return "Your shader code wasnt found. ERROR: " + console.log(err);
-//         }
-//         var res = data.split(" ");
-//         for (var i = 0; i < res.length; i++) {
-//             res[i] = res[i].trim();
-//             res[i] = res[i].split(";",1)[0];
-//         }
-//         var temp = res.indexOf(value);
-//         return res[temp-1];
-//     });
-// }
